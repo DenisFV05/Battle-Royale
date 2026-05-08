@@ -680,7 +680,9 @@ class _GameViewState extends State<_GameView>
       if (localPosition.dx < 0 ||
           localPosition.dy < 0 ||
           localPosition.dx > _surfaceSize.width ||
-          localPosition.dy > _surfaceSize.height) return null;
+          localPosition.dy > _surfaceSize.height) {
+        return null;
+      }
       return localPosition;
     }
     final double x = (localPosition.dx - _offsetX) / _scale;
@@ -723,7 +725,9 @@ class _GameViewState extends State<_GameView>
   void _resizeGameIfNeeded(int width, int height, bool letterboxedMode) {
     if (width == _lastGameWidth &&
         height == _lastGameHeight &&
-        letterboxedMode == _lastLetterboxedMode) return;
+        letterboxedMode == _lastLetterboxedMode) {
+      return;
+    }
     _lastGameWidth = width;
     _lastGameHeight = height;
     _lastLetterboxedMode = letterboxedMode;
