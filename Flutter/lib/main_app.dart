@@ -43,17 +43,17 @@ class _GameRootState extends State<_GameRoot> {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF58A6FF),
-          brightness: Brightness.dark,
+          seedColor: const Color(0xFF3498DB),
+          brightness: Brightness.light,
         ),
         textTheme: const TextTheme(
-          headlineLarge: TextStyle(fontFamily: 'monospace', letterSpacing: 2),
+          headlineLarge: TextStyle(letterSpacing: 2),
         ),
       ),
       home: Scaffold(
-        backgroundColor: const Color(0xFF050A12),
+        backgroundColor: const Color(0xFFF0F4F8),
         body: SafeArea(
           child: _networkConfig == null
               ? _ConfigurationScreen(onStart: _handleStartGame)
@@ -84,22 +84,13 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
   final TextEditingController _portCtrl =
       TextEditingController(text: '3000');
   String? _nameError;
-  late AnimationController _animCtrl;
-  late Animation<double> _pulse;
-
   @override
   void initState() {
     super.initState();
-    _animCtrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 2))
-      ..repeat(reverse: true);
-    _pulse = Tween<double>(begin: 0.85, end: 1.0).animate(
-        CurvedAnimation(parent: _animCtrl, curve: Curves.easeInOut));
   }
 
   @override
   void dispose() {
-    _animCtrl.dispose();
     _nameCtrl.dispose();
     _hostCtrl.dispose();
     _portCtrl.dispose();
@@ -156,9 +147,6 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Animated background
-        Positioned.fill(child: _AnimatedBackground()),
-
         // Content
         Center(
           child: SingleChildScrollView(
@@ -169,31 +157,21 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Title
-                  AnimatedBuilder(
-                    animation: _pulse,
-                    builder: (_, __) => Transform.scale(
-                      scale: _pulse.value,
-                      child: const Text(
-                        '⚔ BATTLEROYALE',
-                        style: TextStyle(
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 4,
-                          color: Color(0xFFFFE07A),
-                          shadows: [
-                            Shadow(
-                                color: Color(0xFFFFE07A),
-                                blurRadius: 20),
-                          ],
-                        ),
-                      ),
+                  const Text(
+                    'POKÉMON ROYALE',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 4,
+                      color: Color(0xFFE74C3C),
                     ),
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    'Last Tank Standing',
+                    'Mystery Dungeon Arena',
                     style: TextStyle(
-                      color: Color(0xFF8B949E),
+                      color: Color(0xFF7F8C8D),
                       fontSize: 14,
                       letterSpacing: 2,
                     ),
@@ -203,15 +181,15 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
                   // Card
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xCC0D1117),
+                      color: const Color(0xFFFFFFFF),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: const Color(0xFF30363D),
+                        color: const Color(0xFFD1D8E0),
                         width: 1,
                       ),
                       boxShadow: const [
                         BoxShadow(
-                          color: Color(0x4458A6FF),
+                          color: Color(0x11000000),
                           blurRadius: 30,
                           spreadRadius: -5,
                         ),
@@ -235,32 +213,32 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
                         TextField(
                           controller: _nameCtrl,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: Color(0xFF2C3E50),
                             fontWeight: FontWeight.bold,
                           ),
                           decoration: InputDecoration(
                             hintText: 'Ex: Jugador1',
                             hintStyle: const TextStyle(
-                                color: Color(0xFF444D56)),
+                                color: Color(0xFFBDC3C7)),
                             errorText: _nameError,
                             prefixIcon: const Icon(Icons.person,
-                                color: Color(0xFF58A6FF), size: 20),
+                                color: Color(0xFF3498DB), size: 20),
                             filled: true,
-                            fillColor: const Color(0xFF0D1117),
+                            fillColor: const Color(0xFFF8F9FA),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(
-                                  color: Color(0xFF30363D)),
+                                  color: Color(0xFFD1D8E0)),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(
-                                  color: Color(0xFF30363D)),
+                                  color: Color(0xFFD1D8E0)),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(
-                                  color: Color(0xFF58A6FF), width: 2),
+                                  color: Color(0xFF3498DB), width: 2),
                             ),
                           ),
                           textInputAction: TextInputAction.next,
@@ -301,7 +279,7 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
                                   controller: _hostCtrl,
                                   onChanged: (_) => setState(() {}),
                                   style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF2C3E50),
                                       fontFamily: 'monospace',
                                       fontSize: 13),
                                   decoration: _fieldDecoration('IP / Host'),
@@ -313,7 +291,7 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
                                   controller: _portCtrl,
                                   onChanged: (_) => setState(() {}),
                                   style: const TextStyle(
-                                      color: Colors.white,
+                                      color: Color(0xFF2C3E50),
                                       fontFamily: 'monospace',
                                       fontSize: 13),
                                   keyboardType: TextInputType.number,
@@ -336,8 +314,8 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
                           child: ElevatedButton(
                             onPressed: _startGame,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF58A6FF),
-                              foregroundColor: Colors.black,
+                              backgroundColor: const Color(0xFF3498DB),
+                              foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -363,9 +341,9 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
 
                   const SizedBox(height: 16),
                   const Text(
-                    'WASD per moure • Clic esquerre per disparar',
+                    'WASD per moure • ESPAI per atacar',
                     style: TextStyle(
-                      color: Color(0xFF444D56),
+                      color: Color(0xFF7F8C8D),
                       fontSize: 11,
                       letterSpacing: 1,
                     ),
@@ -382,23 +360,23 @@ class _ConfigurationScreenState extends State<_ConfigurationScreen>
   InputDecoration _fieldDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Color(0xFF8B949E), fontSize: 12),
+      labelStyle: const TextStyle(color: Color(0xFF7F8C8D), fontSize: 12),
       filled: true,
-      fillColor: const Color(0xFF0D1117),
+      fillColor: const Color(0xFFF8F9FA),
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFF30363D)),
+        borderSide: const BorderSide(color: Color(0xFFD1D8E0)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: const BorderSide(color: Color(0xFF30363D)),
+        borderSide: const BorderSide(color: Color(0xFFD1D8E0)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide:
-            const BorderSide(color: Color(0xFF58A6FF), width: 1.5),
+            const BorderSide(color: Color(0xFF3498DB), width: 1.5),
       ),
     );
   }
@@ -418,19 +396,19 @@ class _ServerOptionSelector extends StatelessWidget {
     return Row(
       children: [
         _OptionChip(
-          label: '🖥 Local',
+          label: 'Local',
           selected: selected == ServerOption.local,
           onTap: () => onChanged(ServerOption.local),
         ),
         const SizedBox(width: 8),
         _OptionChip(
-          label: '🌐 Proxmox',
+          label: 'Proxmox',
           selected: selected == ServerOption.proxmox,
           onTap: () => onChanged(ServerOption.proxmox),
         ),
         const SizedBox(width: 8),
         _OptionChip(
-          label: '✏ Custom',
+          label: 'Custom',
           selected: selected == ServerOption.custom,
           onTap: () => onChanged(ServerOption.custom),
         ),
@@ -459,13 +437,13 @@ class _OptionChip extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: selected
-              ? const Color(0xFF58A6FF).withOpacity(0.15)
-              : const Color(0xFF0D1117),
+              ? const Color(0xFF3498DB).withOpacity(0.1)
+              : const Color(0xFFF8F9FA),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: selected
-                ? const Color(0xFF58A6FF)
-                : const Color(0xFF30363D),
+                ? const Color(0xFF3498DB)
+                : const Color(0xFFD1D8E0),
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -476,8 +454,8 @@ class _OptionChip extends StatelessWidget {
             fontWeight:
                 selected ? FontWeight.bold : FontWeight.normal,
             color: selected
-                ? const Color(0xFF58A6FF)
-                : const Color(0xFF8B949E),
+                ? const Color(0xFF3498DB)
+                : const Color(0xFF7F8C8D),
           ),
         ),
       ),
@@ -485,116 +463,7 @@ class _OptionChip extends StatelessWidget {
   }
 }
 
-// ─── Animated Background ──────────────────────────────────────────────────────
-
-class _AnimatedBackground extends StatefulWidget {
-  @override
-  State<_AnimatedBackground> createState() => _AnimatedBackgroundState();
-}
-
-class _AnimatedBackgroundState extends State<_AnimatedBackground>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  final List<_FloatingTank> _tanks = [];
-  final math.Random _rng = math.Random(42);
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-        vsync: this, duration: const Duration(seconds: 12))
-      ..repeat();
-    for (int i = 0; i < 8; i++) {
-      _tanks.add(_FloatingTank(
-        x: _rng.nextDouble(),
-        y: _rng.nextDouble(),
-        speed: 0.008 + _rng.nextDouble() * 0.012,
-        angle: _rng.nextDouble() * math.pi * 2,
-        size: 12 + _rng.nextDouble() * 20,
-        color: [
-          const Color(0x0CE53935),
-          const Color(0x0C1E88E5),
-          const Color(0x0C43A047),
-          const Color(0x0CFB8C00),
-          const Color(0x0C8E24AA),
-        ][i % 5],
-      ));
-    }
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctrl,
-      builder: (_, __) => CustomPaint(
-        painter: _BgPainter(_tanks, _ctrl.value),
-        size: Size.infinite,
-      ),
-    );
-  }
-}
-
-class _FloatingTank {
-  double x, y;
-  final double speed, angle, size;
-  final Color color;
-
-  _FloatingTank({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.angle,
-    required this.size,
-    required this.color,
-  });
-}
-
-class _BgPainter extends CustomPainter {
-  final List<_FloatingTank> tanks;
-  final double t;
-
-  _BgPainter(this.tanks, this.t);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bgPaint = Paint()..color = const Color(0xFF050A12);
-    canvas.drawRect(Offset.zero & size, bgPaint);
-
-    // Grid
-    final gridPaint = Paint()
-      ..color = const Color(0xFF0C1220)
-      ..strokeWidth = 1;
-    const double spacing = 50;
-    for (double x = 0; x < size.width; x += spacing) {
-      canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
-    }
-    for (double y = 0; y < size.height; y += spacing) {
-      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
-    }
-
-    // Floating tanks
-    final paint = Paint()..style = PaintingStyle.fill;
-    for (final tank in tanks) {
-      final cx = (tank.x + math.cos(tank.angle) * t * tank.speed * 5) % 1.0;
-      final cy = (tank.y + math.sin(tank.angle) * t * tank.speed * 5) % 1.0;
-      paint.color = tank.color;
-      canvas.drawCircle(
-        Offset(cx * size.width, cy * size.height),
-        tank.size,
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_BgPainter old) => old.t != t;
-}
+// Background classes removed for simplicity
 
 // ─── Game View ────────────────────────────────────────────────────────────────
 

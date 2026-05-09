@@ -16,18 +16,18 @@ class PlayScreen extends ScreenAdapter {
   static const double leaderboardWidth   = 240;
   static const double leaderboardPadding = 12;
 
-  static final ui.Color bgColor         = const ui.Color(0xFF0A0E1A);
-  static final ui.Color gridColor       = const ui.Color(0xFF151A2E);
-  static final ui.Color wallColor       = const ui.Color(0xFF3D4263);
-  static final ui.Color wallHighlight   = const ui.Color(0xFF525880);
-  static final ui.Color healthBarBg     = const ui.Color(0xFF1A1A2E);
+  static final ui.Color bgColor         = const ui.Color(0xFFA9DFBF); // Light green meadow
+  static final ui.Color gridColor       = const ui.Color(0xFF82E0AA); // Softer green grid
+  static final ui.Color wallColor       = const ui.Color(0xFF8D6E63); // Brown walls
+  static final ui.Color wallHighlight   = const ui.Color(0xFFA1887F);
+  static final ui.Color healthBarBg     = const ui.Color(0x88000000);
   static final ui.Color healthBarFg     = const ui.Color(0xFF2ECC71);
   static final ui.Color healthBarLow    = const ui.Color(0xFFE74C3C);
-  static final ui.Color panelBg         = const ui.Color(0xCC080C14);
-  static final ui.Color panelBorder     = const ui.Color(0xFF58A6FF);
-  static final ui.Color textColorTitle  = const ui.Color(0xFFFFFFFF);
-  static final ui.Color textColorDim    = const ui.Color(0xFF8B949E);
-  static final ui.Color overlayColor    = const ui.Color(0xDD000000);
+  static final ui.Color panelBg         = const ui.Color(0xEEF0F4F8); // Light panel
+  static final ui.Color panelBorder     = const ui.Color(0xFFBDC3C7);
+  static final ui.Color textColorTitle  = const ui.Color(0xFF2C3E50); // Dark text
+  static final ui.Color textColorDim    = const ui.Color(0xFF7F8C8D);
+  static final ui.Color overlayColor    = const ui.Color(0xEEFFFFFF); // Light overlay
   static final ui.Color flashColor      = const ui.Color(0xCCFFFFFF);
 
   final GameApp game;
@@ -145,7 +145,7 @@ class PlayScreen extends ScreenAdapter {
   void _renderWalls(ShapeRenderer shapes, AppData appData) {
     for (final BattleRoyaleWall wall in appData.walls) {
       shapes.begin(ShapeType.filled);
-      shapes.setColor(const ui.Color(0xFF080A14));
+      shapes.setColor(const ui.Color(0x33000000));
       shapes.rect(wall.x + 3, wall.y + 3, wall.w, wall.h);
       shapes.end();
 
@@ -160,7 +160,7 @@ class PlayScreen extends ScreenAdapter {
       shapes.end();
 
       shapes.begin(ShapeType.line);
-      shapes.setColor(const ui.Color(0xFF5A6090));
+      shapes.setColor(const ui.Color(0xFF6D4C41));
       shapes.rect(wall.x, wall.y, wall.w, wall.h);
       shapes.end();
     }
@@ -297,7 +297,7 @@ class PlayScreen extends ScreenAdapter {
     final BitmapFont font   = game.getFont();
     batch.begin();
     font.getData().setScale(0.65);
-    font.setColor(isLocal ? const ui.Color(0xFFFFE07A) : const ui.Color(0xCCFFFFFF));
+    font.setColor(isLocal ? const ui.Color(0xFFE74C3C) : const ui.Color(0xCC000000));
     // Show Pokémon name, not just player name
     final String label = player.pokemonId.isNotEmpty
         ? player.pokemonId[0].toUpperCase() + player.pokemonId.substring(1)
@@ -381,25 +381,25 @@ class PlayScreen extends ScreenAdapter {
 
     font.getData().setScale(1.1);
     font.setColor(textColorTitle);
-    font.drawText('⚔ Pokémon Royale', panelX + leaderboardPadding, 28);
+    font.drawText('Pokemon Royale', panelX + leaderboardPadding, 28);
 
     font.getData().setScale(0.85);
     final String phaseText = appData.phase == MatchPhase.playing
-        ? '🟢 En partida'
+        ? 'En partida'
         : appData.phase == MatchPhase.finished
-            ? '🏆 Finalitzat'
-            : '⏳ Esperant...';
+            ? 'Finalitzat'
+            : 'Esperant...';
     font.setColor(textColorDim);
     font.drawText(phaseText, panelX + leaderboardPadding, 50);
 
     font.getData().setScale(0.7);
-    font.setColor(const ui.Color(0xFF3A4466));
+    font.setColor(const ui.Color(0xFFBDC3C7));
     font.drawText('────────────────', panelX + leaderboardPadding, 68);
 
     font.getData().setScale(0.9);
     double rowY = 90;
     for (final RankingEntry entry in appData.ranking) {
-      final String prefix      = entry.alive ? '🔴' : '💀';
+      final String prefix      = entry.alive ? 'O' : 'X';
       final String displayName = entry.name.length > 10 ? entry.name.substring(0, 10) : entry.name;
       final String pokeName    = entry.pokemonId.isNotEmpty
           ? entry.pokemonId[0].toUpperCase() + entry.pokemonId.substring(1)
@@ -413,7 +413,7 @@ class PlayScreen extends ScreenAdapter {
 
       batch.begin();
       font.setColor(entry.id == appData.playerId
-          ? const ui.Color(0xFFFFE07A)
+          ? const ui.Color(0xFFE74C3C)
           : textColorTitle);
       font.drawText('#${entry.rank} $prefix $pokeName', panelX + leaderboardPadding + 14, rowY);
       font.getData().setScale(0.72);
@@ -440,7 +440,7 @@ class PlayScreen extends ScreenAdapter {
 
     final double glow = 1.0 + math.sin(_gameTime * 2) * 0.1;
     shapes.begin(ShapeType.filled);
-    shapes.setColor(const ui.Color(0x22FFE07A));
+    shapes.setColor(const ui.Color(0x22F4D03F));
     shapes.circle(gameAreaW / 2, screenH * 0.38, 80 * glow, 20);
     shapes.end();
 
@@ -449,21 +449,21 @@ class PlayScreen extends ScreenAdapter {
     batch.begin();
 
     final String title = appData.winnerName.isNotEmpty
-        ? '🏆 ${appData.winnerName} ha guanyat!'
-        : '🏆 Partida finalitzada!';
+        ? '${appData.winnerName} ha guanyat!'
+        : 'Partida finalitzada!';
 
     font.getData().setScale(2.2);
-    font.setColor(const ui.Color(0xFFFFE07A));
+    font.setColor(const ui.Color(0xFFE74C3C));
     font.drawText(title, gameAreaW * 0.08, screenH * 0.44);
 
     font.getData().setScale(1.1);
-    font.setColor(const ui.Color(0xFFD8FFE3));
+    font.setColor(const ui.Color(0xFF2C3E50));
     font.drawText('Prem Restart per jugar de nou', gameAreaW * 0.18, screenH * 0.54);
 
     font.getData().setScale(0.9);
     double statY = screenH * 0.63;
     for (final RankingEntry entry in appData.ranking) {
-      final String medal = entry.rank == 1 ? '🥇' : entry.rank == 2 ? '🥈' : entry.rank == 3 ? '🥉' : '  ';
+      final String medal = entry.rank == 1 ? '#1' : entry.rank == 2 ? '#2' : entry.rank == 3 ? '#3' : '  ';
       font.setColor(entry.rank <= 3 ? textColorTitle : textColorDim);
       font.drawText(
         '$medal ${entry.name} — ${entry.kills} kills, ${entry.score} pts',

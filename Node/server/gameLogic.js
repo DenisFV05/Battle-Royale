@@ -151,9 +151,14 @@ class GameLogic {
                     if (!POKEMON_DATA[pokemonId]) break;
 
                     // Check no other alive player has this pokemon
+                    let taken = false;
                     for (const [pid, p] of this.players) {
-                        if (pid !== id && p.pokemonId === pokemonId) break;
+                        if (pid !== id && p.pokemonId === pokemonId) {
+                            taken = true;
+                            break;
+                        }
                     }
+                    if (taken) break;
 
                     const pokeData = POKEMON_DATA[pokemonId];
                     player.pokemonId = pokemonId;

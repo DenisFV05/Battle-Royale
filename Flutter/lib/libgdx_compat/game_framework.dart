@@ -230,8 +230,8 @@ class BitmapFont {
 
   void _drawText(String text, double x, double y) {
     final ui.ParagraphBuilder pb =
-        ui.ParagraphBuilder(ui.ParagraphStyle(fontSize: 16 * _data.scale))
-          ..pushStyle(ui.TextStyle(color: _color, fontSize: 16 * _data.scale))
+        ui.ParagraphBuilder(ui.ParagraphStyle(fontSize: 16 * _data.scale, fontWeight: ui.FontWeight.w900))
+          ..pushStyle(ui.TextStyle(color: _color, fontSize: 16 * _data.scale, fontWeight: ui.FontWeight.w900))
           ..addText(text);
     final ui.Paragraph paragraph = pb.build();
     paragraph.layout(const ui.ParagraphConstraints(width: double.infinity));
@@ -253,12 +253,13 @@ class GlyphLayout {
     text = value;
     final ui.ParagraphBuilder pb =
         ui.ParagraphBuilder(
-            ui.ParagraphStyle(fontSize: 16 * font.getData().scale),
+            ui.ParagraphStyle(fontSize: 16 * font.getData().scale, fontWeight: ui.FontWeight.w900),
           )
           ..pushStyle(
             ui.TextStyle(
               color: const ui.Color(0xFFFFFFFF),
               fontSize: 16 * font.getData().scale,
+              fontWeight: ui.FontWeight.w900,
             ),
           )
           ..addText(value);
