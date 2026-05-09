@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'app_data.dart';
 import 'game_app.dart';
 import 'libgdx_compat/game_framework.dart';
+import 'libgdx_compat/gdx.dart';
 import 'libgdx_compat/math_types.dart';
 import 'libgdx_compat/viewport.dart';
 import 'play_screen.dart';
@@ -269,8 +270,13 @@ class WaitingRoomScreen extends ScreenAdapter {
     // We use Gdx.input but need to convert screen → world coords
     // (libgdx_compat click handling happens via justTouched)
     if (Gdx.input.justTouched()) {
-      final double mx = viewport.unprojectX(Gdx.input.getX().toDouble());
-      final double my = viewport.unprojectY(Gdx.input.getY().toDouble());
+      final Vector3 touchPos = viewport.unproject(Vector3(
+        Gdx.input.getX().toDouble(),
+        Gdx.input.getY().toDouble(),
+        0,
+      ));
+      final double mx = touchPos.x;
+      final double my = touchPos.y;
 
       for (int i = 0; i < pokeList.length; i++) {
         final int col = i % gridCols;
