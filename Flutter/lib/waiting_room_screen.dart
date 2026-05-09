@@ -309,11 +309,16 @@ class WaitingRoomScreen extends ScreenAdapter {
 
   ui.Color _elementColor(String element) {
     switch (element) {
-      case 'electric': return const ui.Color(0xFFF4D03F);
-      case 'fire':     return const ui.Color(0xFFE74C3C);
+      case 'dragon':   return const ui.Color(0xFF7038F8);
       case 'water':    return const ui.Color(0xFF3498DB);
+      case 'fire':     return const ui.Color(0xFFE74C3C);
+      case 'ghost':    return const ui.Color(0xFF705898);
+      case 'electric': return const ui.Color(0xFFF4D03F);
+      case 'fighting': return const ui.Color(0xFFC03028);
+      case 'rock':     return const ui.Color(0xFFB8A038);
       case 'grass':    return const ui.Color(0xFF2ECC71);
-      case 'fighting': return const ui.Color(0xFF8E44AD);
+      case 'ice':      return const ui.Color(0xFF98D8D8);
+      case 'ground':   return const ui.Color(0xFFE0C068);
       default:         return const ui.Color(0xFFBDC3C7);
     }
   }

@@ -21,28 +21,32 @@ const WALL_COUNT = 8;
 // === POKEMON DATA (up to 10 players) ===
 // element is used by the client to colour the projectile
 const POKEMON_DATA = {
+    axew:       { name: 'Axew',       color: '#709C64', element: 'dragon'   },
+    buizel:     { name: 'Buizel',     color: '#E8A33A', element: 'water'    },
+    chimchar:   { name: 'Chimchar',   color: '#E67E22', element: 'fire'     },
+    misdreavus: { name: 'Misdreavus', color: '#4E5B70', element: 'ghost'    },
     pikachu:    { name: 'Pikachu',    color: '#F4D03F', element: 'electric' },
-    charmander: { name: 'Charmander', color: '#E67E22', element: 'fire'     },
-    squirtle:   { name: 'Squirtle',   color: '#2E86C1', element: 'water'    },
-    bulbasaur:  { name: 'Bulbasaur',  color: '#27AE60', element: 'grass'    },
-    eevee:      { name: 'Eevee',      color: '#D5A874', element: 'normal'   },
     riolu:      { name: 'Riolu',      color: '#2471A3', element: 'fighting' },
-    mudkip:     { name: 'Mudkip',     color: '#1A9BD7', element: 'water'    },
-    treecko:    { name: 'Treecko',    color: '#1E8449', element: 'grass'    },
-    torchic:    { name: 'Torchic',    color: '#E74C3C', element: 'fire'     },
-    piplup:     { name: 'Piplup',     color: '#2980B9', element: 'water'    },
+    rockruff:   { name: 'Rockruff',   color: '#B6A181', element: 'rock'     },
+    rowlet:     { name: 'Rowlet',     color: '#27AE60', element: 'grass'    },
+    snorunt:    { name: 'Snorunt',    color: '#E0E0E0', element: 'ice'      },
+    trapinch:   { name: 'Trapinch',   color: '#D35400', element: 'ground'   },
 };
 
 const POKEMON_IDS = Object.keys(POKEMON_DATA);
 
 // Colour of each bullet element
 const ELEMENT_COLORS = {
-    electric: '#F4D03F',
-    fire:     '#E74C3C',
+    dragon:   '#7038F8',
     water:    '#3498DB',
+    fire:     '#E74C3C',
+    ghost:    '#705898',
+    electric: '#F4D03F',
+    fighting: '#C03028',
+    rock:     '#B8A038',
     grass:    '#2ECC71',
-    normal:   '#BDC3C7',
-    fighting: '#8E44AD',
+    ice:      '#98D8D8',
+    ground:   '#E0C068',
 };
 
 class GameLogic {
