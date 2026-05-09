@@ -20,15 +20,16 @@ class MultiplayerPlayer {
   final int maxHealth;
   final bool alive;
   final String direction;
+  final String facing;
   final String color;
   final int kills;
   final int score;
   final int joinOrder;
+  final String pokemonId;
+  final String element;
 
-  // Kept for compatibility with the level renderer's sortedPlayers
   int get gemsCollected => 0;
   bool get moving => direction != 'none';
-  String get facing => direction == 'none' ? 'down' : direction;
 
   const MultiplayerPlayer({
     required this.id,
@@ -41,10 +42,13 @@ class MultiplayerPlayer {
     required this.maxHealth,
     required this.alive,
     required this.direction,
+    required this.facing,
     required this.color,
     required this.kills,
     required this.score,
     required this.joinOrder,
+    required this.pokemonId,
+    required this.element,
   });
 
   factory MultiplayerPlayer.fromJson(Map<String, dynamic> json) {
@@ -53,16 +57,19 @@ class MultiplayerPlayer {
       name: (json['name'] as String? ?? 'Player').trim(),
       x: (json['x'] as num? ?? 0).toDouble(),
       y: (json['y'] as num? ?? 0).toDouble(),
-      width: (json['width'] as num? ?? 30).toDouble(),
-      height: (json['height'] as num? ?? 30).toDouble(),
+      width: (json['width'] as num? ?? 32).toDouble(),
+      height: (json['height'] as num? ?? 32).toDouble(),
       health: (json['health'] as num? ?? 100).toInt(),
       maxHealth: (json['maxHealth'] as num? ?? 100).toInt(),
       alive: json['alive'] as bool? ?? true,
       direction: (json['direction'] as String? ?? 'none').trim(),
-      color: (json['color'] as String? ?? '#E53935').trim(),
+      facing: (json['facing'] as String? ?? 'down').trim(),
+      color: (json['color'] as String? ?? '#F4D03F').trim(),
       kills: (json['kills'] as num? ?? 0).toInt(),
       score: (json['score'] as num? ?? 0).toInt(),
       joinOrder: (json['joinOrder'] as num? ?? 0).toInt(),
+      pokemonId: (json['pokemonId'] as String? ?? 'pikachu').trim(),
+      element: (json['element'] as String? ?? 'normal').trim(),
     );
   }
 }
@@ -75,6 +82,7 @@ class BattleRoyaleBullet {
   final double y;
   final String ownerId;
   final double size;
+  final String element;
 
   const BattleRoyaleBullet({
     required this.id,
@@ -82,6 +90,7 @@ class BattleRoyaleBullet {
     required this.y,
     required this.ownerId,
     required this.size,
+    required this.element,
   });
 
   factory BattleRoyaleBullet.fromJson(Map<String, dynamic> json) {
@@ -90,7 +99,33 @@ class BattleRoyaleBullet {
       x: (json['x'] as num? ?? 0).toDouble(),
       y: (json['y'] as num? ?? 0).toDouble(),
       ownerId: (json['ownerId'] as String? ?? '').trim(),
-      size: (json['size'] as num? ?? 6).toDouble(),
+      size: (json['size'] as num? ?? 8).toDouble(),
+      element: (json['element'] as String? ?? 'normal').trim(),
+    );
+  }
+}
+
+// ─── Pokémon catalogue entry (from server snapshot) ─────────────────────────
+
+class PokemonInfo {
+  final String id;
+  final String name;
+  final String color;
+  final String element;
+
+  const PokemonInfo({
+    required this.id,
+    required this.name,
+    required this.color,
+    required this.element,
+  });
+
+  factory PokemonInfo.fromJson(Map<String, dynamic> json) {
+    return PokemonInfo(
+      id: (json['id'] as String? ?? '').trim(),
+      name: (json['name'] as String? ?? '').trim(),
+      color: (json['color'] as String? ?? '#FFFFFF').trim(),
+      element: (json['element'] as String? ?? 'normal').trim(),
     );
   }
 }
@@ -133,6 +168,7 @@ class RankingEntry {
   final int score;
   final bool alive;
   final String color;
+  final String pokemonId;
 
   const RankingEntry({
     required this.rank,
@@ -142,6 +178,7 @@ class RankingEntry {
     required this.score,
     required this.alive,
     required this.color,
+    required this.pokemonId,
   });
 
   factory RankingEntry.fromJson(Map<String, dynamic> json) {
@@ -152,7 +189,8 @@ class RankingEntry {
       kills: (json['kills'] as num? ?? 0).toInt(),
       score: (json['score'] as num? ?? 0).toInt(),
       alive: json['alive'] as bool? ?? false,
-      color: (json['color'] as String? ?? '#E53935').trim(),
+      color: (json['color'] as String? ?? '#F4D03F').trim(),
+      pokemonId: (json['pokemonId'] as String? ?? '').trim(),
     );
   }
 }
@@ -191,6 +229,8 @@ class _PlayerStaticData {
   final double height;
   final int joinOrder;
   final String color;
+  final String pokemonId;
+  final String element;
 
   const _PlayerStaticData({
     required this.id,
@@ -199,6 +239,8 @@ class _PlayerStaticData {
     required this.height,
     required this.joinOrder,
     required this.color,
+    required this.pokemonId,
+    required this.element,
   });
 }
 
@@ -210,6 +252,7 @@ class _PlayerDynamicData {
   final int maxHealth;
   final bool alive;
   final String direction;
+  final String facing;
   final int kills;
   final int score;
 
@@ -221,6 +264,7 @@ class _PlayerDynamicData {
     required this.maxHealth,
     required this.alive,
     required this.direction,
+    required this.facing,
     required this.kills,
     required this.score,
   });
@@ -253,6 +297,7 @@ class AppData extends ChangeNotifier {
   List<MultiplayerPlayer> players = const <MultiplayerPlayer>[];
   List<BattleRoyaleBullet> bullets = const <BattleRoyaleBullet>[];
   List<BattleRoyaleHealthItem> healthItems = const <BattleRoyaleHealthItem>[];
+  List<PokemonInfo> pokemonList = const <PokemonInfo>[];  // Available Pokémon from server
   List<RankingEntry> ranking = const <RankingEntry>[];
 
   int _reconnectAttempts = 0;
@@ -310,6 +355,17 @@ class AppData extends ChangeNotifier {
   void sendShoot(double angle) {
     if (!canMove) return;
     _sendMessage(<String, dynamic>{'type': 'shoot', 'angle': angle});
+  }
+
+  // Shoot in the direction the Pokémon is already facing (no angle needed)
+  void sendShootFacing() {
+    if (!canMove) return;
+    _sendMessage(<String, dynamic>{'type': 'shoot'});
+  }
+
+  void sendPokemonSelection(String pokemonId) {
+    if (!isConnected) return;
+    _sendMessage(<String, dynamic>{'type': 'selectPokemon', 'pokemonId': pokemonId});
   }
 
   void requestMatchRestart() {
@@ -429,6 +485,14 @@ class AppData extends ChangeNotifier {
           .toList(growable: false);
     }
 
+    if (state.containsKey('pokemonList')) {
+      final List<dynamic> rawPokemon = state['pokemonList'] as List<dynamic>? ?? [];
+      pokemonList = rawPokemon
+          .whereType<Map>()
+          .map((Map p) => PokemonInfo.fromJson(_mapFromDynamic(p)))
+          .toList(growable: false);
+    }
+
     if (state.containsKey('players')) {
       final List<dynamic> rawPlayers = state['players'] as List<dynamic>? ?? [];
       _playerStaticById = <String, _PlayerStaticData>{
@@ -516,10 +580,12 @@ class AppData extends ChangeNotifier {
     return _PlayerStaticData(
       id: (json['id'] as String? ?? '').trim(),
       name: (json['name'] as String? ?? 'Player').trim(),
-      width: (json['width'] as num? ?? 30).toDouble(),
-      height: (json['height'] as num? ?? 30).toDouble(),
+      width: (json['width'] as num? ?? 32).toDouble(),
+      height: (json['height'] as num? ?? 32).toDouble(),
       joinOrder: (json['joinOrder'] as num? ?? 0).toInt(),
-      color: (json['color'] as String? ?? '#E53935').trim(),
+      color: (json['color'] as String? ?? '#F4D03F').trim(),
+      pokemonId: (json['pokemonId'] as String? ?? 'pikachu').trim(),
+      element: (json['element'] as String? ?? 'normal').trim(),
     );
   }
 
@@ -532,6 +598,7 @@ class AppData extends ChangeNotifier {
       maxHealth: (json['maxHealth'] as num? ?? 100).toInt(),
       alive: json['alive'] as bool? ?? true,
       direction: (json['direction'] as String? ?? 'none').trim(),
+      facing: (json['facing'] as String? ?? 'down').trim(),
       kills: (json['kills'] as num? ?? 0).toInt(),
       score: (json['score'] as num? ?? 0).toInt(),
     );
@@ -543,23 +610,26 @@ class AppData extends ChangeNotifier {
       ..._playerDynamicById.keys,
     };
     players = ids.map((String id) {
-      final _PlayerStaticData? staticData = _playerStaticById[id];
-      final _PlayerDynamicData? dynamicData = _playerDynamicById[id];
+      final _PlayerStaticData? s = _playerStaticById[id];
+      final _PlayerDynamicData? d = _playerDynamicById[id];
       return MultiplayerPlayer(
         id: id,
-        name: staticData?.name ?? 'Player',
-        x: dynamicData?.x ?? 0,
-        y: dynamicData?.y ?? 0,
-        width: staticData?.width ?? 30,
-        height: staticData?.height ?? 30,
-        health: dynamicData?.health ?? 100,
-        maxHealth: dynamicData?.maxHealth ?? 100,
-        alive: dynamicData?.alive ?? true,
-        direction: dynamicData?.direction ?? 'none',
-        color: staticData?.color ?? '#E53935',
-        kills: dynamicData?.kills ?? 0,
-        score: dynamicData?.score ?? 0,
-        joinOrder: staticData?.joinOrder ?? 0,
+        name: s?.name ?? 'Player',
+        x: d?.x ?? 0,
+        y: d?.y ?? 0,
+        width: s?.width ?? 32,
+        height: s?.height ?? 32,
+        health: d?.health ?? 100,
+        maxHealth: d?.maxHealth ?? 100,
+        alive: d?.alive ?? true,
+        direction: d?.direction ?? 'none',
+        facing: d?.facing ?? 'down',
+        color: s?.color ?? '#F4D03F',
+        kills: d?.kills ?? 0,
+        score: d?.score ?? 0,
+        joinOrder: s?.joinOrder ?? 0,
+        pokemonId: s?.pokemonId ?? 'pikachu',
+        element: s?.element ?? 'normal',
       );
     }).toList(growable: false);
   }

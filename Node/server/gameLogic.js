@@ -3,9 +3,9 @@
 // === GAME CONFIGURATION ===
 const WORLD_WIDTH = 800;
 const WORLD_HEIGHT = 600;
-const PLAYER_SIZE = 30;
-const BULLET_SIZE = 6;
-const BULLET_SPEED = 300;
+const PLAYER_SIZE = 32;
+const BULLET_SIZE = 8;
+const BULLET_SPEED = 280;
 const BULLET_DAMAGE = 20;
 const BULLET_LIFETIME_MS = 3000;
 const PLAYER_SPEED = 120;
@@ -14,16 +14,36 @@ const HEALTH_ITEM_HEAL = 30;
 const HEALTH_ITEM_SPAWN_INTERVAL_MS = 15000;
 const MAX_HEALTH = 100;
 const WAITING_DURATION_MS = 30000;
-const SHOOT_COOLDOWN_MS = 500;
+const SHOOT_COOLDOWN_MS = 600;
 const TARGET_FPS_FALLBACK = 60;
 const WALL_COUNT = 8;
 
-// Player colors for up to 10 players
-const PLAYER_COLORS = [
-    '#E53935', '#1E88E5', '#43A047', '#FB8C00',
-    '#8E24AA', '#00ACC1', '#F4511E', '#3949AB',
-    '#7CB342', '#D81B60'
-];
+// === POKEMON DATA (up to 10 players) ===
+// element is used by the client to colour the projectile
+const POKEMON_DATA = {
+    pikachu:    { name: 'Pikachu',    color: '#F4D03F', element: 'electric' },
+    charmander: { name: 'Charmander', color: '#E67E22', element: 'fire'     },
+    squirtle:   { name: 'Squirtle',   color: '#2E86C1', element: 'water'    },
+    bulbasaur:  { name: 'Bulbasaur',  color: '#27AE60', element: 'grass'    },
+    eevee:      { name: 'Eevee',      color: '#D5A874', element: 'normal'   },
+    riolu:      { name: 'Riolu',      color: '#2471A3', element: 'fighting' },
+    mudkip:     { name: 'Mudkip',     color: '#1A9BD7', element: 'water'    },
+    treecko:    { name: 'Treecko',    color: '#1E8449', element: 'grass'    },
+    torchic:    { name: 'Torchic',    color: '#E74C3C', element: 'fire'     },
+    piplup:     { name: 'Piplup',     color: '#2980B9', element: 'water'    },
+};
+
+const POKEMON_IDS = Object.keys(POKEMON_DATA);
+
+// Colour of each bullet element
+const ELEMENT_COLORS = {
+    electric: '#F4D03F',
+    fire:     '#E74C3C',
+    water:    '#3498DB',
+    grass:    '#2ECC71',
+    normal:   '#BDC3C7',
+    fighting: '#8E44AD',
+};
 
 class GameLogic {
     constructor() {
@@ -45,9 +65,7 @@ class GameLogic {
     }
 
     generateWalls() {
-        this.walls = [];
-        // Generate some random walls for cover
-        const wallDefs = [
+        this.walls = [
             { x: 150, y: 100, w: 80, h: 20 },
             { x: 350, y: 200, w: 20, h: 100 },
             { x: 550, y: 150, w: 80, h: 20 },
@@ -57,12 +75,13 @@ class GameLogic {
             { x: 650, y: 300, w: 20, h: 100 },
             { x: 400, y: 480, w: 80, h: 20 },
         ];
-        this.walls = wallDefs;
     }
 
     addClient(id) {
         const spawn = this.getSpawnPosition(this.players.size);
-        const colorIndex = this.nextJoinOrder % PLAYER_COLORS.length;
+        const defaultPokemon = POKEMON_IDS[this.nextJoinOrder % POKEMON_IDS.length];
+        const pokeData = POKEMON_DATA[defaultPokemon];
+
         const player = {
             id,
             name: `Jugador ${this.players.size + 1}`,
@@ -73,13 +92,15 @@ class GameLogic {
             health: MAX_HEALTH,
             maxHealth: MAX_HEALTH,
             alive: true,
-            direction: 'none',
+            direction: 'down',   // Pokémon always face a direction (default down)
+            facing: 'down',      // Last non-none direction (for shooting)
             score: 0,
             kills: 0,
             joinOrder: this.nextJoinOrder++,
-            color: PLAYER_COLORS[colorIndex],
+            pokemonId: defaultPokemon,
+            color: pokeData.color,
+            element: pokeData.element,
             lastShot: 0,
-            aimAngle: 0,
         };
         this.players.set(id, player);
         this.initialStateDirty = true;
@@ -118,14 +139,40 @@ class GameLogic {
                     }
                     break;
                 }
+
+                case 'selectPokemon': {
+                    // Only allow in waiting phase
+                    if (this.phase !== 'waiting') break;
+                    const pokemonId = (obj.pokemonId || '').trim();
+                    if (!POKEMON_DATA[pokemonId]) break;
+
+                    // Check no other alive player has this pokemon
+                    for (const [pid, p] of this.players) {
+                        if (pid !== id && p.pokemonId === pokemonId) break;
+                    }
+
+                    const pokeData = POKEMON_DATA[pokemonId];
+                    player.pokemonId = pokemonId;
+                    player.color = pokeData.color;
+                    player.element = pokeData.element;
+                    this.initialStateDirty = true;
+                    return true;
+                }
+
                 case 'direction':
                     player.direction = obj.value || 'none';
-                    break;
-                case 'shoot':
-                    if (player.alive && this.phase === 'playing') {
-                        this.playerShoot(player, obj.angle || 0);
+                    // Keep track of last real direction for shooting
+                    if (obj.value && obj.value !== 'none') {
+                        player.facing = obj.value;
                     }
                     break;
+
+                case 'shoot':
+                    if (player.alive && this.phase === 'playing') {
+                        this.playerShoot(player);
+                    }
+                    break;
+
                 case 'restartMatch':
                     if (this.phase === 'finished') {
                         this.restartToWaitingRoom();
@@ -137,25 +184,41 @@ class GameLogic {
         return false;
     }
 
-    playerShoot(player, angle) {
+    playerShoot(player) {
         const now = Date.now();
         if (now - player.lastShot < SHOOT_COOLDOWN_MS) return;
         player.lastShot = now;
 
         const centerX = player.x + player.width / 2;
         const centerY = player.y + player.height / 2;
+
+        // Direction the Pokémon is facing determines bullet trajectory
+        const facing = player.facing || 'down';
+        const dirVectors = {
+            up:        { vx: 0,     vy: -1 },
+            down:      { vx: 0,     vy:  1 },
+            left:      { vx: -1,    vy:  0 },
+            right:     { vx: 1,     vy:  0 },
+            upLeft:    { vx: -0.707, vy: -0.707 },
+            upRight:   { vx:  0.707, vy: -0.707 },
+            downLeft:  { vx: -0.707, vy:  0.707 },
+            downRight: { vx:  0.707, vy:  0.707 },
+        };
+
+        const dir = dirVectors[facing] || dirVectors['down'];
         const spawnDist = player.width / 2 + BULLET_SIZE;
 
         this.bullets.push({
             id: this.nextBulletId++,
             ownerId: player.id,
-            x: centerX + Math.cos(angle) * spawnDist,
-            y: centerY + Math.sin(angle) * spawnDist,
-            vx: Math.cos(angle) * BULLET_SPEED,
-            vy: Math.sin(angle) * BULLET_SPEED,
+            x: centerX + dir.vx * spawnDist,
+            y: centerY + dir.vy * spawnDist,
+            vx: dir.vx * BULLET_SPEED,
+            vy: dir.vy * BULLET_SPEED,
             size: BULLET_SIZE,
             createdAt: now,
             damage: BULLET_DAMAGE,
+            element: player.element,
         });
     }
 
@@ -167,9 +230,7 @@ class GameLogic {
 
         // === WAITING PHASE ===
         if (this.phase === 'waiting') {
-            if (this.lobbyEndsAt == null) {
-                this.startWaitingRoom();
-            }
+            if (this.lobbyEndsAt == null) this.startWaitingRoom();
             if (this.lobbyEndsAt != null && Date.now() >= this.lobbyEndsAt) {
                 this.startMatch();
             }
@@ -184,20 +245,19 @@ class GameLogic {
 
             let dx = 0, dy = 0;
             switch (player.direction) {
-                case 'up': dy = -1; break;
-                case 'down': dy = 1; break;
-                case 'left': dx = -1; break;
-                case 'right': dx = 1; break;
-                case 'upLeft': dx = -0.707; dy = -0.707; break;
-                case 'upRight': dx = 0.707; dy = -0.707; break;
-                case 'downLeft': dx = -0.707; dy = 0.707; break;
-                case 'downRight': dx = 0.707; dy = 0.707; break;
+                case 'up':        dy = -1;     break;
+                case 'down':      dy =  1;     break;
+                case 'left':      dx = -1;     break;
+                case 'right':     dx =  1;     break;
+                case 'upLeft':    dx = -0.707; dy = -0.707; break;
+                case 'upRight':   dx =  0.707; dy = -0.707; break;
+                case 'downLeft':  dx = -0.707; dy =  0.707; break;
+                case 'downRight': dx =  0.707; dy =  0.707; break;
             }
 
             const newX = player.x + dx * PLAYER_SPEED * dt;
             const newY = player.y + dy * PLAYER_SPEED * dt;
 
-            // Check wall collisions
             if (!this.collidesWithWall(newX, player.y, player.width, player.height)) {
                 player.x = Math.max(0, Math.min(WORLD_WIDTH - player.width, newX));
             }
@@ -212,19 +272,16 @@ class GameLogic {
             bullet.x += bullet.vx * dt;
             bullet.y += bullet.vy * dt;
 
-            // Remove if out of bounds or expired
             if (bullet.x < -10 || bullet.x > WORLD_WIDTH + 10 ||
                 bullet.y < -10 || bullet.y > WORLD_HEIGHT + 10 ||
                 now - bullet.createdAt > BULLET_LIFETIME_MS) {
                 return false;
             }
 
-            // Check wall collision
             if (this.collidesWithWall(bullet.x - bullet.size/2, bullet.y - bullet.size/2, bullet.size, bullet.size)) {
                 return false;
             }
 
-            // Check player collision
             for (const player of this.players.values()) {
                 if (!player.alive) continue;
                 if (player.id === bullet.ownerId) continue;
@@ -237,14 +294,13 @@ class GameLogic {
                     if (player.health <= 0) {
                         player.health = 0;
                         player.alive = false;
-                        // Credit kill to shooter
                         const shooter = this.players.get(bullet.ownerId);
                         if (shooter) {
                             shooter.kills++;
                             shooter.score += 100;
                         }
                     }
-                    return false; // Remove bullet
+                    return false;
                 }
             }
 
@@ -257,7 +313,6 @@ class GameLogic {
             this.lastHealthSpawn = now;
         }
 
-        // Check health item pickups
         this.healthItems = this.healthItems.filter(item => {
             for (const player of this.players.values()) {
                 if (!player.alive) continue;
@@ -266,7 +321,7 @@ class GameLogic {
                     player.x, player.y, player.width, player.height
                 )) {
                     player.health = Math.min(MAX_HEALTH, player.health + HEALTH_ITEM_HEAL);
-                    return false; // Remove item
+                    return false;
                 }
             }
             return true;
@@ -281,9 +336,7 @@ class GameLogic {
 
     collidesWithWall(x, y, w, h) {
         for (const wall of this.walls) {
-            if (this.rectsOverlap(x, y, w, h, wall.x, wall.y, wall.w, wall.h)) {
-                return true;
-            }
+            if (this.rectsOverlap(x, y, w, h, wall.x, wall.y, wall.w, wall.h)) return true;
         }
         return false;
     }
@@ -300,26 +353,21 @@ class GameLogic {
             attempts++;
         } while (this.collidesWithWall(x, y, HEALTH_ITEM_SIZE, HEALTH_ITEM_SIZE) && attempts < 50);
 
-        this.healthItems.push({
-            id: this.nextItemId++,
-            x, y,
-            width: HEALTH_ITEM_SIZE,
-            height: HEALTH_ITEM_SIZE,
-        });
+        this.healthItems.push({ id: this.nextItemId++, x, y, width: HEALTH_ITEM_SIZE, height: HEALTH_ITEM_SIZE });
     }
 
     getSpawnPosition(index) {
         const positions = [
-            { x: 50, y: 50 },
-            { x: WORLD_WIDTH - 80, y: 50 },
-            { x: 50, y: WORLD_HEIGHT - 80 },
-            { x: WORLD_WIDTH - 80, y: WORLD_HEIGHT - 80 },
-            { x: WORLD_WIDTH / 2, y: 50 },
-            { x: WORLD_WIDTH / 2, y: WORLD_HEIGHT - 80 },
-            { x: 50, y: WORLD_HEIGHT / 2 },
-            { x: WORLD_WIDTH - 80, y: WORLD_HEIGHT / 2 },
-            { x: WORLD_WIDTH / 4, y: WORLD_HEIGHT / 4 },
-            { x: 3 * WORLD_WIDTH / 4, y: 3 * WORLD_HEIGHT / 4 },
+            { x: 50,                    y: 50 },
+            { x: WORLD_WIDTH - 80,      y: 50 },
+            { x: 50,                    y: WORLD_HEIGHT - 80 },
+            { x: WORLD_WIDTH - 80,      y: WORLD_HEIGHT - 80 },
+            { x: WORLD_WIDTH / 2,       y: 50 },
+            { x: WORLD_WIDTH / 2,       y: WORLD_HEIGHT - 80 },
+            { x: 50,                    y: WORLD_HEIGHT / 2 },
+            { x: WORLD_WIDTH - 80,      y: WORLD_HEIGHT / 2 },
+            { x: WORLD_WIDTH / 4,       y: WORLD_HEIGHT / 4 },
+            { x: 3 * WORLD_WIDTH / 4,   y: 3 * WORLD_HEIGHT / 4 },
         ];
         return positions[index % positions.length];
     }
@@ -345,13 +393,13 @@ class GameLogic {
         this.healthItems = [];
         this.lastHealthSpawn = Date.now();
         this.positionPlayersForStart();
-
-        // Reset all players
         for (const player of this.players.values()) {
             player.health = MAX_HEALTH;
             player.alive = true;
             player.kills = 0;
             player.score = 0;
+            player.direction = 'down';
+            player.facing = 'down';
         }
     }
 
@@ -360,15 +408,12 @@ class GameLogic {
         if (winner) {
             this.winnerId = winner.id;
             this.winnerName = winner.name;
-            winner.score += 500; // Bonus for winning
+            winner.score += 500;
         }
     }
 
     restartToWaitingRoom() {
-        if (this.players.size <= 0) {
-            this.resetMatch();
-            return;
-        }
+        if (this.players.size <= 0) { this.resetMatch(); return; }
         this.startWaitingRoom();
     }
 
@@ -388,7 +433,8 @@ class GameLogic {
             const spawn = this.getSpawnPosition(index);
             player.x = spawn.x;
             player.y = spawn.y;
-            player.direction = 'none';
+            player.direction = 'down';
+            player.facing = 'down';
             player.health = MAX_HEALTH;
             player.alive = true;
             player.kills = 0;
@@ -410,6 +456,12 @@ class GameLogic {
             worldWidth: WORLD_WIDTH,
             worldHeight: WORLD_HEIGHT,
             walls: this.walls,
+            pokemonList: POKEMON_IDS.map(id => ({
+                id,
+                name: POKEMON_DATA[id].name,
+                color: POKEMON_DATA[id].color,
+                element: POKEMON_DATA[id].element,
+            })),
             players: players.map(p => ({
                 id: p.id,
                 name: p.name,
@@ -417,13 +469,15 @@ class GameLogic {
                 width: p.width,
                 height: p.height,
                 joinOrder: p.joinOrder,
+                pokemonId: p.pokemonId,
+                element: p.element,
             })),
         };
     }
 
     getGameplayStateForPlayer(playerId, options = {}) {
         const includeOtherPlayers = options.includeOtherPlayers !== false;
-        const includeGems = options.includeGems !== false; // We use this for healthItems
+        const includeGems = options.includeGems !== false;
 
         const selfPlayer = this.players.get(playerId);
         const countdownSeconds = this.phase === 'waiting' && this.lobbyEndsAt != null
@@ -442,6 +496,7 @@ class GameLogic {
                 y: Math.round(b.y * 100) / 100,
                 ownerId: b.ownerId,
                 size: b.size,
+                element: b.element,
             })),
             ranking: this.getRanking(),
         };
@@ -454,11 +509,7 @@ class GameLogic {
 
         if (includeGems) {
             state.healthItems = this.healthItems.map(item => ({
-                id: item.id,
-                x: item.x,
-                y: item.y,
-                width: item.width,
-                height: item.height,
+                id: item.id, x: item.x, y: item.y, width: item.width, height: item.height,
             }));
         }
 
@@ -475,9 +526,12 @@ class GameLogic {
             maxHealth: player.maxHealth,
             alive: player.alive,
             direction: player.direction,
+            facing: player.facing,
             color: player.color,
             kills: player.kills,
             score: player.score,
+            pokemonId: player.pokemonId,
+            element: player.element,
         };
     }
 
@@ -495,6 +549,7 @@ class GameLogic {
                 score: p.score,
                 alive: p.alive,
                 color: p.color,
+                pokemonId: p.pokemonId,
             }));
     }
 }
