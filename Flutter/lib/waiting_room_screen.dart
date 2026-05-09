@@ -18,10 +18,10 @@ class WaitingRoomScreen extends ScreenAdapter {
   static const double panelPadding = 14;
 
   // Pokémon grid layout
-  static const double gridStartX  = 246;
-  static const double gridStartY  = 300;
+  static const double gridStartX  = 214;
+  static const double gridStartY  = 220;
   static const double cellSize    = 88;
-  static const double cellPad     = 12;
+  static const double cellPad     = 30;
   static const int   gridCols     = 5;
 
   static final ui.Color background      = colorValueOf('F0F4F8'); // Soft light blue-gray
@@ -87,10 +87,14 @@ class WaitingRoomScreen extends ScreenAdapter {
     batch.setProjectionMatrix(viewport.getCamera().combined);
     batch.begin();
 
-    // Title
+    // Title shadow (Pokemon Blue)
     font.getData().setScale(3.2);
-    font.setColor(titleColor);
+    font.setColor(colorValueOf('3B4CCA'));
     layout.setText(font, 'Pokémon Battle Royale');
+    font.draw(batch, layout, ((worldWidth - panelWidth - layout.width) / 2) + 4, 80 + 4);
+
+    // Title (Pokemon Yellow)
+    font.setColor(colorValueOf('FFCC00'));
     font.draw(batch, layout, (worldWidth - panelWidth - layout.width) / 2, 80);
 
     // Choose your Pokémon
@@ -100,17 +104,17 @@ class WaitingRoomScreen extends ScreenAdapter {
     font.draw(batch, layout, gridStartX, 160);
 
     // Countdown label
-    font.getData().setScale(1.4);
+    font.getData().setScale(1.2);
     font.setColor(dimTextColor);
     layout.setText(font, 'La partida comença en');
     font.draw(batch, layout, (worldWidth - panelWidth - layout.width) / 2, 530);
 
     // Countdown number
-    font.getData().setScale(5.5);
+    font.getData().setScale(3.8);
     font.setColor(highlightColor);
     final String countdown = '${math.max(0, appData.countdownSeconds)}';
     layout.setText(font, countdown);
-    font.draw(batch, layout, (worldWidth - panelWidth - layout.width) / 2, 610);
+    font.draw(batch, layout, (worldWidth - panelWidth - layout.width) / 2, 600);
 
     // Controls reminder
     font.getData().setScale(1.1);
@@ -183,7 +187,7 @@ class WaitingRoomScreen extends ScreenAdapter {
 
       // Convert grid coords to world coords (Y=0 is top)
       final double x = gridStartX + col * (cellSize + cellPad);
-      final double y = 200 + row * (cellSize + cellPad);
+      final double y = gridStartY + row * (cellSize + cellPad);
 
       final ui.Color pokeColor = _parseColor(poke.color);
       final bool isSelected   = poke.id == localPokemon;
@@ -249,7 +253,7 @@ class WaitingRoomScreen extends ScreenAdapter {
       final int col = i % gridCols;
       final int row = i ~/ gridCols;
       final double x = gridStartX + col * (cellSize + cellPad);
-      final double y = 200 + row * (cellSize + cellPad);
+      final double y = gridStartY + row * (cellSize + cellPad);
 
       font.getData().setScale(0.8);
       font.setColor(textColor);
@@ -277,7 +281,7 @@ class WaitingRoomScreen extends ScreenAdapter {
         final int col = i % gridCols;
         final int row = i ~/ gridCols;
         final double x = gridStartX + col * (cellSize + cellPad);
-        final double y = 200 + row * (cellSize + cellPad);
+        final double y = gridStartY + row * (cellSize + cellPad);
 
         if (mx >= x && mx <= x + cellSize && my >= y && my <= y + cellSize) {
           appData.sendPokemonSelection(pokeList[i].id);
