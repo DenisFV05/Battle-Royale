@@ -98,7 +98,7 @@
           "name": "Hero 0",
           "gameplayData": "",
           "type": "Hero 0",
-          "animationId": "anim_1772099194341380",
+          "animationId": "anim_1",
           "x": 32,
           "y": 32,
           "width": 20,
@@ -113,7 +113,7 @@
           "name": "Gem Purple",
           "gameplayData": "",
           "type": "Gem Purple",
-          "animationId": "anim_1772440074459800",
+          "animationId": "anim_2",
           "x": 50,
           "y": 475,
           "width": 15,
@@ -146,9 +146,9 @@
           "animationId": "anim_1",
           "x": 100,
           "y": 475,
-          "width": 15,
-          "height": 15,
-          "imageFile": "media/gem.png",
+          "width": 20,
+          "height": 20,
+          "imageFile": "media/16x16 Idle-Sheet.png",
           "flipX": false,
           "flipY": false,
           "depth": 0.0,
@@ -158,7 +158,7 @@
           "name": "Gem Blue",
           "gameplayData": "",
           "type": "Gem Blue",
-          "animationId": "anim_3",
+          "animationId": "anim_2",
           "x": 125,
           "y": 475,
           "width": 15,
@@ -168,12 +168,62 @@
           "flipY": false,
           "depth": 0.0,
           "groupId": "__main__"
+        },
+        {
+          "name": "Buizel Sprite 5",
+          "gameplayData": "",
+          "type": "Buizel Sprite 5",
+          "animationId": "anim_3",
+          "x": 120,
+          "y": 150,
+          "width": 32,
+          "height": 46,
+          "imageFile": "media/buizel/Idle-Anim.png",
+          "flipX": false,
+          "flipY": false,
+          "depth": 0.0,
+          "groupId": "__group_buizel"
+        },
+        {
+          "name": "Buizel Sprite",
+          "gameplayData": "",
+          "type": "Buizel Sprite",
+          "animationId": "anim_3",
+          "x": 150,
+          "y": 150,
+          "width": 32,
+          "height": 46,
+          "imageFile": "media/buizel/Idle-Anim.png",
+          "flipX": false,
+          "flipY": false,
+          "depth": 0.0,
+          "groupId": "__group_buizel"
+        },
+        {
+          "name": "Buizel Sprite",
+          "gameplayData": "",
+          "type": "Buizel Sprite",
+          "animationId": "anim_3",
+          "x": 150,
+          "y": 150,
+          "width": 32,
+          "height": 46,
+          "imageFile": "media/buizel/Idle-Anim.png",
+          "flipX": false,
+          "flipY": false,
+          "depth": 0.0,
+          "groupId": "__group_buizel"
         }
       ],
       "spriteGroups": [
         {
           "id": "__main__",
           "name": "Main",
+          "collapsed": false
+        },
+        {
+          "id": "__group_buizel",
+          "name": "__group_buizel",
           "collapsed": false
         }
       ],
@@ -243,12 +293,562 @@
       "tileHeight": 15,
       "selectionColorHex": "#FFCC00",
       "groupId": "__main__"
+    },
+    {
+      "name": "Idle-Anim",
+      "fileName": "media/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_1778348437212256_0"
+    },
+    {
+      "name": "Faint-Anim",
+      "fileName": "media/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_1778348437212256_0"
+    },
+    {
+      "name": "Hurt-Anim",
+      "fileName": "media/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 48,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_1778348437212256_0"
+    },
+    {
+      "name": "Walk-Anim",
+      "fileName": "media/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_1778348437212256_0"
+    },
+    {
+      "name": "Strike-Anim",
+      "fileName": "media/Strike-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 64,
+      "tileHeight": 72,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_1778348437212256_0"
+    },
+    {
+      "name": "Buizel Asset",
+      "fileName": "media/buizel/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 46,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_buizel"
+    },
+    {
+      "name": "Axew-Idle Asset",
+      "fileName": "media/axew/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_axew"
+    },
+    {
+      "name": "Axew-Walk Asset",
+      "fileName": "media/axew/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_axew"
+    },
+    {
+      "name": "Axew-Strike Asset",
+      "fileName": "media/axew/Strike-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 64,
+      "tileHeight": 72,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_axew"
+    },
+    {
+      "name": "Axew-Faint Asset",
+      "fileName": "media/axew/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_axew"
+    },
+    {
+      "name": "Axew-Hurt Asset",
+      "fileName": "media/axew/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 48,
+      "tileHeight": 54,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_axew"
+    },
+    {
+      "name": "Buizel-Walk Asset",
+      "fileName": "media/buizel/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_buizel"
+    },
+    {
+      "name": "Buizel-Strike Asset",
+      "fileName": "media/buizel/QuickStrike-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 112,
+      "tileHeight": 120,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_buizel"
+    },
+    {
+      "name": "Buizel-Faint Asset",
+      "fileName": "media/buizel/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_buizel"
+    },
+    {
+      "name": "Buizel-Hurt Asset",
+      "fileName": "media/buizel/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_buizel"
+    },
+    {
+      "name": "Chimchar-Idle Asset",
+      "fileName": "media/chimchar/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_chimchar"
+    },
+    {
+      "name": "Chimchar-Walk Asset",
+      "fileName": "media/chimchar/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 47,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_chimchar"
+    },
+    {
+      "name": "Chimchar-Strike Asset",
+      "fileName": "media/chimchar/Shoot-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_chimchar"
+    },
+    {
+      "name": "Chimchar-Faint Asset",
+      "fileName": "media/chimchar/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_chimchar"
+    },
+    {
+      "name": "Chimchar-Hurt Asset",
+      "fileName": "media/chimchar/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 47,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_chimchar"
+    },
+    {
+      "name": "Misdreavous-Idle Asset",
+      "fileName": "media/misdreavous/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 47,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_misdreavous"
+    },
+    {
+      "name": "Misdreavous-Walk Asset",
+      "fileName": "media/misdreavous/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 47,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_misdreavous"
+    },
+    {
+      "name": "Misdreavous-Strike Asset",
+      "fileName": "media/misdreavous/Shoot-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_misdreavous"
+    },
+    {
+      "name": "Misdreavous-Faint Asset",
+      "fileName": "media/misdreavous/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_misdreavous"
+    },
+    {
+      "name": "Misdreavous-Hurt Asset",
+      "fileName": "media/misdreavous/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 56,
+      "tileHeight": 64,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_misdreavous"
+    },
+    {
+      "name": "Pikachu-Idle Asset",
+      "fileName": "media/pikachu/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_pikachu"
+    },
+    {
+      "name": "Pikachu-Walk Asset",
+      "fileName": "media/pikachu/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_pikachu"
+    },
+    {
+      "name": "Pikachu-Strike Asset",
+      "fileName": "media/pikachu/Shock-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 48,
+      "tileHeight": 64,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_pikachu"
+    },
+    {
+      "name": "Pikachu-Faint Asset",
+      "fileName": "media/pikachu/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_pikachu"
+    },
+    {
+      "name": "Pikachu-Hurt Asset",
+      "fileName": "media/pikachu/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 48,
+      "tileHeight": 64,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_pikachu"
+    },
+    {
+      "name": "Riolu-Idle Asset",
+      "fileName": "media/riolu/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_riolu"
+    },
+    {
+      "name": "Riolu-Walk Asset",
+      "fileName": "media/riolu/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_riolu"
+    },
+    {
+      "name": "Riolu-Strike Asset",
+      "fileName": "media/riolu/RearUp-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_riolu"
+    },
+    {
+      "name": "Riolu-Faint Asset",
+      "fileName": "media/riolu/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_riolu"
+    },
+    {
+      "name": "Riolu-Hurt Asset",
+      "fileName": "media/riolu/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_riolu"
+    },
+    {
+      "name": "Rowlet-Idle Asset",
+      "fileName": "media/rowlet/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rowlet"
+    },
+    {
+      "name": "Rowlet-Walk Asset",
+      "fileName": "media/rowlet/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rowlet"
+    },
+    {
+      "name": "Rowlet-Strike Asset",
+      "fileName": "media/rowlet/Shoot-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rowlet"
+    },
+    {
+      "name": "Rowlet-Faint Asset",
+      "fileName": "media/rowlet/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rowlet"
+    },
+    {
+      "name": "Rowlet-Hurt Asset",
+      "fileName": "media/rowlet/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rowlet"
+    },
+    {
+      "name": "Rockruff-Idle Asset",
+      "fileName": "media/rockruff/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 45,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rockruff"
+    },
+    {
+      "name": "Rockruff-Walk Asset",
+      "fileName": "media/rockruff/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rockruff"
+    },
+    {
+      "name": "Rockruff-Strike Asset",
+      "fileName": "media/rockruff/Shoot-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 48,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rockruff"
+    },
+    {
+      "name": "Rockruff-Faint Asset",
+      "fileName": "media/rockruff/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rockruff"
+    },
+    {
+      "name": "Rockruff-Hurt Asset",
+      "fileName": "media/rockruff/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 48,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_rockruff"
+    },
+    {
+      "name": "Snorunt-Idle Asset",
+      "fileName": "media/snorunt/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_snorunt"
+    },
+    {
+      "name": "Snorunt-Walk Asset",
+      "fileName": "media/snorunt/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 24,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_snorunt"
+    },
+    {
+      "name": "Snorunt-Strike Asset",
+      "fileName": "media/snorunt/Shoot-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 40,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_snorunt"
+    },
+    {
+      "name": "Snorunt-Faint Asset",
+      "fileName": "media/snorunt/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_snorunt"
+    },
+    {
+      "name": "Snorunt-Hurt Asset",
+      "fileName": "media/snorunt/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 48,
+      "tileHeight": 64,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_snorunt"
+    },
+    {
+      "name": "Trapinch-Idle Asset",
+      "fileName": "media/trapinch/Idle-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_trapinch"
+    },
+    {
+      "name": "Trapinch-Walk Asset",
+      "fileName": "media/trapinch/Walk-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_trapinch"
+    },
+    {
+      "name": "Trapinch-Strike Asset",
+      "fileName": "media/trapinch/Bite-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 72,
+      "tileHeight": 88,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_trapinch"
+    },
+    {
+      "name": "Trapinch-Faint Asset",
+      "fileName": "media/trapinch/Faint-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 24,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_trapinch"
+    },
+    {
+      "name": "Trapinch-Hurt Asset",
+      "fileName": "media/trapinch/Hurt-Anim.png",
+      "mediaType": "spritesheet",
+      "tileWidth": 40,
+      "tileHeight": 56,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__group_trapinch"
     }
   ],
   "mediaGroups": [
     {
       "id": "__main__",
       "name": "Main",
+      "collapsed": false
+    },
+    {
+      "id": "__group_1778348437212256_0",
+      "name": "axew",
+      "collapsed": false
+    },
+    {
+      "id": "__group_buizel",
+      "name": "buizel",
+      "collapsed": false
+    },
+    {
+      "id": "__group_axew",
+      "name": "__group_axew",
+      "collapsed": false
+    },
+    {
+      "id": "__group_chimchar",
+      "name": "__group_chimchar",
+      "collapsed": false
+    },
+    {
+      "id": "__group_misdreavous",
+      "name": "__group_misdreavous",
+      "collapsed": false
+    },
+    {
+      "id": "__group_pikachu",
+      "name": "__group_pikachu",
+      "collapsed": false
+    },
+    {
+      "id": "__group_riolu",
+      "name": "__group_riolu",
+      "collapsed": false
+    },
+    {
+      "id": "__group_rowlet",
+      "name": "__group_rowlet",
+      "collapsed": false
+    },
+    {
+      "id": "__group_rockruff",
+      "name": "__group_rockruff",
+      "collapsed": false
+    },
+    {
+      "id": "__group_snorunt",
+      "name": "__group_snorunt",
+      "collapsed": false
+    },
+    {
+      "id": "__group_trapinch",
+      "name": "__group_trapinch",
       "collapsed": false
     }
   ],
