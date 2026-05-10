@@ -1,8 +1,8 @@
 'use strict';
 
 // === GAME CONFIGURATION ===
-const WORLD_WIDTH = 960;
-const WORLD_HEIGHT = 560;
+const WORLD_WIDTH = 1024;
+const WORLD_HEIGHT = 512;
 const PLAYER_SIZE = 32;
 const BULLET_SIZE = 8;
 const BULLET_SPEED = 280;
