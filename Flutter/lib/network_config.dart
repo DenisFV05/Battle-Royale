@@ -1,8 +1,8 @@
 enum ServerOption { local, proxmox, custom }
 
 class NetworkConfig {
-  static const String proxmoxServer = 'ieticloudpro.ieti.cat';
-  static const int proxmoxPort = 3000;
+  static const String proxmoxServer = 'dfernandezvarariu.ieti.site';
+  static const int proxmoxPort = 443;
 
   final ServerOption serverOption;
   final String playerName;
@@ -48,7 +48,7 @@ class NetworkConfig {
       case ServerOption.local:
         return false;
       case ServerOption.proxmox:
-        return false; // Change to true if Proxmox has SSL
+        return true; // Proxmox uses SSL (wss) via port 443
       case ServerOption.custom:
         return false;
     }

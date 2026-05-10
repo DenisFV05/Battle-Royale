@@ -76,7 +76,7 @@ class _ConfigurationScreen extends StatefulWidget {
 
 class _ConfigurationScreenState extends State<_ConfigurationScreen>
     with SingleTickerProviderStateMixin {
-  ServerOption _serverOption = ServerOption.local;
+  ServerOption _serverOption = ServerOption.proxmox;
   final TextEditingController _nameCtrl =
       TextEditingController(text: NetworkConfig.defaults.playerName);
   final TextEditingController _hostCtrl =
