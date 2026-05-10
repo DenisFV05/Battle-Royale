@@ -73,6 +73,19 @@
           "tileMapFile": "tilemaps/level_000_layer_004.json"
         },
         {
+          "name": "Path",
+          "gameplayData": "",
+          "x": 0,
+          "y": 0,
+          "depth": 0.0,
+          "tilesSheetFile": "media/Exterior1_2.png",
+          "tilesWidth": 16,
+          "tilesHeight": 16,
+          "visible": true,
+          "groupId": "__main__",
+          "tileMapFile": "tilemaps/level_000_layer_005.json"
+        },
+        {
           "name": "Terrain",
           "gameplayData": "",
           "x": 0,
@@ -83,7 +96,20 @@
           "tilesHeight": 16,
           "visible": true,
           "groupId": "__main__",
-          "tileMapFile": "tilemaps/level_000_layer_005.json"
+          "tileMapFile": "tilemaps/level_000_layer_006.json"
+        },
+        {
+          "name": "Path",
+          "gameplayData": "",
+          "x": 0,
+          "y": 0,
+          "depth": 0.0,
+          "tilesSheetFile": "media/Exterior1_2.png",
+          "tilesWidth": 16,
+          "tilesHeight": 16,
+          "visible": false,
+          "groupId": "__main__",
+          "tileMapFile": "tilemaps/level_000_layer_007.json"
         }
       ],
       "layerGroups": [
@@ -788,6 +814,24 @@
       "tileHeight": 56,
       "selectionColorHex": "#FFCC00",
       "groupId": "__group_trapinch"
+    },
+    {
+      "name": "Exterior1",
+      "fileName": "media/Exterior1.png",
+      "mediaType": "tileset",
+      "tileWidth": 32,
+      "tileHeight": 32,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__main__"
+    },
+    {
+      "name": "Exterior1_2",
+      "fileName": "media/Exterior1_2.png",
+      "mediaType": "tileset",
+      "tileWidth": 16,
+      "tileHeight": 16,
+      "selectionColorHex": "#FFCC00",
+      "groupId": "__main__"
     }
   ],
   "mediaGroups": [

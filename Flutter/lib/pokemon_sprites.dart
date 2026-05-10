@@ -123,13 +123,17 @@ class PokemonSpriteBundle {
   final SheetInfo hurt;
   final SheetInfo faint;
   final SheetInfo attack;
-
+  final ui.Image normal;
+  final ui.Image joyous;
+  
   const PokemonSpriteBundle({
     required this.idle,
     required this.walk,
     required this.hurt,
     required this.faint,
     required this.attack,
+    required this.normal,
+    required this.joyous
   });
 }
 
@@ -161,6 +165,8 @@ class PokemonSpriteRegistry {
       final SheetInfo hurtS  = _makeSheet(id, 'hurt', await _load('$base/Hurt-Anim.png'));
       final SheetInfo faintS = _makeSheet(id, 'faint', await _load('$base/Faint-Anim.png'));
       final SheetInfo atkS   = _makeSheet(id, 'attack', await _load('$base/$atkName.png'));
+      final ui.Image normal = await _load('$base/Normal.png');
+      final ui.Image joyous = await _load('$base/Joyous.png');
 
       _bundles[id] = PokemonSpriteBundle(
         idle:   idleS,
@@ -168,6 +174,8 @@ class PokemonSpriteRegistry {
         hurt:   hurtS,
         faint:  faintS,
         attack: atkS,
+        normal: normal,
+        joyous: joyous
       );
 
       // ignore: avoid_print

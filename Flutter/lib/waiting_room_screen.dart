@@ -42,7 +42,7 @@ class WaitingRoomScreen extends ScreenAdapter {
 
   double _elapsed = 0;
   // Track which cell the mouse is over (for hover highlight)
-  int _hoveredIndex = -1;
+  final int _hoveredIndex = -1;
 
   WaitingRoomScreen(this.game);
 
@@ -215,16 +215,28 @@ class WaitingRoomScreen extends ScreenAdapter {
       final PokemonSpriteBundle? bundle = reg.get(poke.id);
       if (bundle != null) {
         final double alpha = (isTaken && !isSelected) ? 0.35 : 1.0;
+        final ui.Image imageToDraw = isSelected ? bundle.joyous : bundle.normal;
+
         const double pad = 8;
         final ui.Rect dst = ui.Rect.fromLTWH(
           x + pad, y + pad, cellSize - pad * 2, cellSize - pad * 2);
-        drawSpriteFrame(
-          canvas: canvas,
-          sheet: bundle.idle,
-          col: 0,
-          row: dirS,
-          dstRect: dst,
-          alpha: alpha,
+        final ui.Paint paint = ui.Paint()
+          ..color = ui.Color.fromARGB(
+            (alpha * 255).round(),
+            255,
+            255,
+            255,
+          );
+
+        canvas.drawImageRect(
+          imageToDraw,
+          ui.Rect.fromLTWH(
+            0, 0,
+            imageToDraw.width.toDouble(),
+            imageToDraw.height.toDouble(),
+          ),
+          dst,
+          paint,
         );
       } else {
         // Fallback circle
