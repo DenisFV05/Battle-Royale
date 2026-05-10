@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 import 'app_data.dart';
 import 'effects.dart';
 import 'game_app.dart';
+import 'level_data.dart';
+import 'libgdx_compat/asset_manager.dart';
 import 'libgdx_compat/game_framework.dart';
 import 'libgdx_compat/gdx.dart';
 import 'pokemon_sprites.dart';
@@ -107,14 +109,8 @@ class PlayScreen extends ScreenAdapter {
     canvas.translate(_worldOffsetX, _worldOffsetY);
     canvas.scale(_worldScale, _worldScale);
 
-    _renderGrid(shapes, appData);
+    _renderMapLayers(canvas, appData);
 
-    shapes.begin(ShapeType.line);
-    shapes.setColor(const ui.Color(0xFF2A3050));
-    shapes.rect(0, 0, appData.worldWidth, appData.worldHeight);
-    shapes.end();
-
-    _renderWalls(shapes, appData);
     _renderHealthItems(shapes, appData);
     _renderPlayers(shapes, appData);
     _renderBullets(shapes, appData);
@@ -129,44 +125,58 @@ class PlayScreen extends ScreenAdapter {
     }
   }
 
-  // ─── Grid ─────────────────────────────────────────────────────────────────
+  // ─── Tilemap Layers ───────────────────────────────────────────────────────
 
-  void _renderGrid(ShapeRenderer shapes, AppData appData) {
-    const double spacing = 40;
-    shapes.begin(ShapeType.line);
-    shapes.setColor(gridColor);
-    for (double x = 0; x <= appData.worldWidth; x += spacing) {
-      shapes.line(x, 0, x, appData.worldHeight);
-    }
-    for (double y = 0; y <= appData.worldHeight; y += spacing) {
-      shapes.line(0, y, appData.worldWidth, y);
-    }
-    shapes.end();
-  }
+  void _renderMapLayers(ui.Canvas canvas, AppData appData) {
+    final LevelData? level = appData.levelData;
+    if (level == null) return;
 
-  // ─── Walls ────────────────────────────────────────────────────────────────
-
-  void _renderWalls(ShapeRenderer shapes, AppData appData) {
-    for (final BattleRoyaleWall wall in appData.walls) {
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(const ui.Color(0x33000000));
-      shapes.rect(wall.x + 3, wall.y + 3, wall.w, wall.h);
-      shapes.end();
-
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(wallColor);
-      shapes.rect(wall.x, wall.y, wall.w, wall.h);
-      shapes.end();
-
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(wallHighlight);
-      shapes.rect(wall.x, wall.y, wall.w, math.min(4, wall.h));
-      shapes.end();
-
-      shapes.begin(ShapeType.line);
-      shapes.setColor(const ui.Color(0xFF6D4C41));
-      shapes.rect(wall.x, wall.y, wall.w, wall.h);
-      shapes.end();
+    // Draw from bottom to top (in JSON, the first layer is the topmost one)
+    for (int i = level.layers.size - 1; i >= 0; i--) {
+      final LevelLayer layer = level.layers.get(i);
+      if (!layer.visible) continue;
+      
+      final String path = layer.tilesTexturePath;
+      if (!game.getAssetManager().isLoaded(path, Texture)) continue;
+      final Texture tileset = game.getAssetManager().get(path, Texture);
+      
+      final int colsInTexture = tileset.width ~/ layer.tileWidth;
+      
+      for (int row = 0; row < layer.tileMap.length; row++) {
+        final List<int> rowData = layer.tileMap[row];
+        for (int col = 0; col < rowData.length; col++) {
+          final int tileIndex = rowData[col];
+          if (tileIndex < 0) continue; // Empty tile
+          
+          final double dstX = layer.x + col * layer.tileWidth;
+          final double dstY = layer.y + row * layer.tileHeight;
+          
+          final int srcCol = tileIndex % colsInTexture;
+          final int srcRow = tileIndex ~/ colsInTexture;
+          
+          // Inset by 0.05 to prevent texture bleeding (rayas raras) with fractional scaling
+          final ui.Rect src = ui.Rect.fromLTWH(
+            (srcCol * layer.tileWidth).toDouble() + 0.05,
+            (srcRow * layer.tileHeight).toDouble() + 0.05,
+            layer.tileWidth.toDouble() - 0.1,
+            layer.tileHeight.toDouble() - 0.1,
+          );
+          
+          final ui.Rect dst = ui.Rect.fromLTWH(
+            dstX, 
+            dstY, 
+            layer.tileWidth.toDouble(), 
+            layer.tileHeight.toDouble()
+          );
+          
+          canvas.drawImageRect(
+            tileset.image, 
+            src, 
+            dst, 
+            ui.Paint()..filterQuality = ui.FilterQuality.none
+          );
+        }
+      }
     }
   }
 

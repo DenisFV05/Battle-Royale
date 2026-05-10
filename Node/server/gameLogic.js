@@ -1,8 +1,8 @@
 'use strict';
 
 // === GAME CONFIGURATION ===
-const WORLD_WIDTH = 800;
-const WORLD_HEIGHT = 600;
+const WORLD_WIDTH = 960;
+const WORLD_HEIGHT = 560;
 const PLAYER_SIZE = 32;
 const BULLET_SIZE = 8;
 const BULLET_SPEED = 280;
@@ -70,14 +70,11 @@ class GameLogic {
 
     generateWalls() {
         this.walls = [
-            { x: 150, y: 100, w: 80, h: 20 },
-            { x: 350, y: 200, w: 20, h: 100 },
-            { x: 550, y: 150, w: 80, h: 20 },
-            { x: 200, y: 350, w: 100, h: 20 },
-            { x: 500, y: 400, w: 20, h: 80 },
-            { x: 100, y: 450, w: 80, h: 20 },
-            { x: 650, y: 300, w: 20, h: 100 },
-            { x: 400, y: 480, w: 80, h: 20 },
+            { x: 320, y: 80, w: 32, h: 80 },  // Stones 0
+            { x: 640, y: 304, w: 80, h: 32 }, // Stones 10
+            { x: 528, y: 400, w: 32, h: 80 }, // Stones 1
+            { x: 656, y: 80, w: 80, h: 32 },  // Stones 2
+            { x: 48,  y: 400, w: 80, h: 32 }, // Stones 3
         ];
     }
 

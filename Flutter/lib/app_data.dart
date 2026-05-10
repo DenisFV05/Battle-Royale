@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'level_data.dart';
 import 'network_config.dart';
 import 'utils_websockets.dart';
 
@@ -287,6 +288,7 @@ class AppData extends ChangeNotifier {
   int countdownSeconds = 0;
   String? winnerId;
   String winnerName = '';
+  LevelData? levelData;
 
   // World config from snapshot
   double worldWidth = 800;

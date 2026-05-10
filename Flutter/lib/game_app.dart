@@ -1,4 +1,5 @@
 import 'app_data.dart';
+import 'level_loader.dart';
 import 'libgdx_compat/asset_manager.dart';
 import 'libgdx_compat/game_framework.dart';
 import 'loading_screen.dart';
@@ -25,6 +26,11 @@ class GameApp extends Game {
     _font!.getData().markupEnabled = false;
     // Load all Pokémon sprites from assets
     await PokemonSpriteRegistry.instance.loadAll();
+    
+    // Load level data
+    await LevelLoader.initialize();
+    appData.levelData = LevelLoader.loadLevel(0);
+    
     setScreen(LoadingScreen(this));
   }
 
@@ -41,8 +47,17 @@ class GameApp extends Game {
   /// Kept for API compatibility — BattleRoyale has no named levels.
   String getLevelName(int levelIndex) => 'BattleRoyale';
 
-  /// No-op: BattleRoyale uses no pre-loaded texture assets.
-  void queueReferencedAssetsForLevel(int levelIndex) {}
+  /// Queues textures for the tilemap layers.
+  void queueReferencedAssetsForLevel(int levelIndex) {
+    final levelData = appData.levelData;
+    if (levelData != null) {
+      for (final layer in levelData.layers.iterable()) {
+        if (layer.visible && layer.tilesTexturePath.isNotEmpty) {
+          assetManager.load(layer.tilesTexturePath, Texture);
+        }
+      }
+    }
+  }
 
   @override
   void dispose() {

@@ -29,14 +29,18 @@ class LoadingScreen extends ScreenAdapter {
 
   double _elapsedSeconds = 0;
 
-  LoadingScreen(this.game);
+  LoadingScreen(this.game) {
+    game.queueReferencedAssetsForLevel(0);
+  }
 
   @override
   void render(double delta) {
     _elapsedSeconds += delta;
 
-    // Transition to waiting room after minimum display time
-    if (_elapsedSeconds >= minSecondsOnScreen) {
+    final bool assetsLoaded = game.getAssetManager().update(17);
+
+    // Transition to waiting room after minimum display time AND assets are loaded
+    if (_elapsedSeconds >= minSecondsOnScreen && assetsLoaded) {
       game.setScreen(WaitingRoomScreen(game));
       return;
     }
