@@ -8,6 +8,7 @@ import 'libgdx_compat/gdx.dart';
 import 'libgdx_compat/math_types.dart';
 import 'libgdx_compat/viewport.dart';
 import 'play_screen.dart';
+import 'pokemon_sprites.dart';
 
 /// Waiting room shown while the server counts down.
 /// Includes a Pokémon selector grid.
@@ -174,6 +175,9 @@ class WaitingRoomScreen extends ScreenAdapter {
     final List<PokemonInfo> pokeList = appData.pokemonList;
     if (pokeList.isEmpty) return;
 
+    final PokemonSpriteRegistry reg = PokemonSpriteRegistry.instance;
+    final ui.Canvas canvas = Gdx.graphics.getCanvas();
+
     // Which pokemon are taken by other players
     final Set<String> takenPokemon = {};
     for (final MultiplayerPlayer p in appData.players) {
@@ -185,7 +189,6 @@ class WaitingRoomScreen extends ScreenAdapter {
       final int col = i % gridCols;
       final int row = i ~/ gridCols;
 
-      // Convert grid coords to world coords (Y=0 is top)
       final double x = gridStartX + col * (cellSize + cellPad);
       final double y = gridStartY + row * (cellSize + cellPad);
 
@@ -197,27 +200,44 @@ class WaitingRoomScreen extends ScreenAdapter {
       // Shadow
       shapes.begin(ShapeType.filled);
       shapes.setColor(const ui.Color(0x11000000));
-      shapes.rect(x + 2, y - 2, cellSize, cellSize);
+      shapes.rect(x + 2, y + 2, cellSize, cellSize);
       shapes.end();
 
       // Cell background
       shapes.begin(ShapeType.filled);
       shapes.setColor(isTaken && !isSelected
-          ? const ui.Color(0xFFE0E0E0)
+          ? const ui.Color(0xFFE8E8E8)
           : pokeColor.withAlpha(isSelected ? 200 : 120));
       shapes.rect(x, y, cellSize, cellSize);
       shapes.end();
 
-      // Pokémon icon placeholder: big colored circle
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(isTaken && !isSelected ? pokeColor.withAlpha(100) : pokeColor);
-      shapes.circle(x + cellSize / 2, y + cellSize / 2 + 8, 24, 16);
-      shapes.end();
+      // Sprite or circle fallback
+      final PokemonSpriteBundle? bundle = reg.get(poke.id);
+      if (bundle != null) {
+        final double alpha = (isTaken && !isSelected) ? 0.35 : 1.0;
+        const double pad = 8;
+        final ui.Rect dst = ui.Rect.fromLTWH(
+          x + pad, y + pad, cellSize - pad * 2, cellSize - pad * 2);
+        drawSpriteFrame(
+          canvas: canvas,
+          sheet: bundle.idle,
+          col: 0,
+          row: dirS,
+          dstRect: dst,
+          alpha: alpha,
+        );
+      } else {
+        // Fallback circle
+        shapes.begin(ShapeType.filled);
+        shapes.setColor(isTaken && !isSelected ? pokeColor.withAlpha(100) : pokeColor);
+        shapes.circle(x + cellSize / 2, y + cellSize / 2, 22, 16);
+        shapes.end();
+      }
 
       // Element indicator dot (bottom-right)
       shapes.begin(ShapeType.filled);
       shapes.setColor(_elementColor(poke.element));
-      shapes.circle(x + cellSize - 10, y + 10, 6, 12);
+      shapes.circle(x + cellSize - 10, y + cellSize - 10, 6, 12);
       shapes.end();
 
       // Border

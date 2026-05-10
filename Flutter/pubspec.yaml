@@ -64,6 +64,16 @@ flutter:
     - assets/levels/
     - assets/levels/animations/
     - assets/levels/media/
+    - assets/levels/media/axew/
+    - assets/levels/media/buizel/
+    - assets/levels/media/chimchar/
+    - assets/levels/media/misdreavous/
+    - assets/levels/media/pikachu/
+    - assets/levels/media/riolu/
+    - assets/levels/media/rockruff/
+    - assets/levels/media/rowlet/
+    - assets/levels/media/snorunt/
+    - assets/levels/media/trapinch/
     - assets/levels/paths/
     - assets/levels/tilemaps/
     - assets/levels/zones/

@@ -6,6 +6,7 @@ import 'effects.dart';
 import 'game_app.dart';
 import 'libgdx_compat/game_framework.dart';
 import 'libgdx_compat/gdx.dart';
+import 'pokemon_sprites.dart';
 import 'waiting_room_screen.dart';
 
 // ─── BattleRoyale Play Screen ─────────────────────────────────────────────────
@@ -43,6 +44,9 @@ class PlayScreen extends ScreenAdapter {
   final DamageTracker  _damageTracker = DamageTracker();
   double _gameTime = 0;
   final Set<String> _previouslyAlive = {};
+
+  // Sprite animation state per player
+  final Map<String, _PlayerAnim> _playerAnims = {};
 
   PlayScreen(this.game);
 
@@ -170,127 +174,159 @@ class PlayScreen extends ScreenAdapter {
 
   void _renderHealthItems(ShapeRenderer shapes, AppData appData) {
     final double pulse = 1.0 + math.sin(_gameTime * 3.0) * 0.12;
+    final ui.Canvas canvas = Gdx.graphics.getCanvas();
+    final ui.Image? gemImg = PokemonSpriteRegistry.instance.gem;
+
+    // Gem spritesheet: 5 cols × 4 rows of colored gems
+    final double gemFW = gemImg != null ? gemImg.width  / 5.0 : 0;
+    final double gemFH = gemImg != null ? gemImg.height / 4.0 : 0;
+
     for (final BattleRoyaleHealthItem item in appData.healthItems) {
-      final double cx  = item.x + item.width / 2;
-      final double cy  = item.y + item.height / 2;
-      final double arm   = item.width * 0.35 * pulse;
-      final double thick = item.width * 0.18 * pulse;
+      final double cx   = item.x + item.width  / 2;
+      final double cy   = item.y + item.height / 2;
+      final double size = item.width * pulse;
 
+      // Soft glow
       shapes.begin(ShapeType.filled);
-      shapes.setColor(const ui.Color(0x1A2ECC71));
-      shapes.circle(cx, cy, item.width * 0.7 * pulse, 12);
+      shapes.setColor(const ui.Color(0x332ECC71));
+      shapes.circle(cx, cy, size * 0.72, 12);
       shapes.end();
 
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(const ui.Color(0xFF2ECC71));
-      shapes.rect(cx - thick, cy - arm, thick * 2, arm * 2);
-      shapes.rect(cx - arm, cy - thick, arm * 2, thick * 2);
-      shapes.end();
+      if (gemImg != null) {
+        // Draw green gem (col=1, row=0 — second gem is green)
+        final ui.Rect src = ui.Rect.fromLTWH(gemFW, 0, gemFW, gemFH);
+        final ui.Rect dst = ui.Rect.fromCenter(
+          center: ui.Offset(cx, cy),
+          width:  size * 1.1,
+          height: size * 1.1,
+        );
+        canvas.drawImageRect(
+          gemImg, src, dst,
+          ui.Paint()..filterQuality = ui.FilterQuality.none,
+        );
+      } else {
+        final double arm   = size * 0.35;
+        final double thick = size * 0.18;
+        shapes.begin(ShapeType.filled);
+        shapes.setColor(const ui.Color(0xFF2ECC71));
+        shapes.rect(cx - thick, cy - arm, thick * 2, arm * 2);
+        shapes.rect(cx - arm, cy - thick, arm * 2, thick * 2);
+        shapes.end();
+      }
     }
   }
 
-  // ─── Pokémon Players (colored boxes) ──────────────────────────────────────
+  // ─── Pokémon Players (sprite-based) ─────────────────────────────────────────
 
   void _renderPlayers(ShapeRenderer shapes, AppData appData) {
     final String? localId = appData.playerId;
+    final ui.Canvas canvas = Gdx.graphics.getCanvas();
+    final PokemonSpriteRegistry reg = PokemonSpriteRegistry.instance;
 
     for (final MultiplayerPlayer player in appData.players) {
       if (!player.alive) continue;
 
-      final ui.Color pokeColor  = _parseColor(player.color);
-      final bool isLocal        = player.id == localId;
-      final bool isFlashing     = _damageTracker.isFlashing(player.id, _gameTime);
-      final ui.Color drawColor  = isFlashing ? flashColor : pokeColor;
+      final bool isLocal   = player.id == localId;
+      final bool isFlashing = _damageTracker.isFlashing(player.id, _gameTime);
 
       final double x = player.x;
       final double y = player.y;
       final double w = player.width;
       final double h = player.height;
-      final double cx = x + w / 2;
-      final double cy = y + h / 2;
 
-      // Shadow
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(const ui.Color(0x44000000));
-      shapes.rect(x + 3, y + 3, w, h);
-      shapes.end();
+      // Animate sprite frame
+      _playerAnims.putIfAbsent(player.id, () => _PlayerAnim());
+      final _PlayerAnim anim = _playerAnims[player.id]!;
+      anim.update(_gameTime, player.direction);
 
-      // Main body box
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(drawColor.withAlpha(isLocal ? 230 : 180));
-      shapes.rect(x, y, w, h);
-      shapes.end();
+      final PokemonSpriteBundle? bundle = reg.get(player.pokemonId);
 
-      // Inner lighter box (sprite placeholder centre)
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(drawColor.withAlpha(isLocal ? 120 : 80));
-      shapes.rect(x + 6, y + 6, w - 12, h - 12);
-      shapes.end();
+      if (bundle != null) {
+        // Choose sheet: hurt if flashing, walk if moving, idle if still
+        final bool moving = player.direction != 'none' && player.direction.isNotEmpty;
+        SheetInfo sheet;
+        if (isFlashing) {
+          sheet = bundle.hurt;
+        } else if (moving) {
+          sheet = bundle.walk;
+        } else {
+          sheet = bundle.idle;
+        }
 
-      // Facing direction arrow
-      _renderFacingArrow(shapes, player, cx, cy, drawColor);
+        final int row = facingToRow(player.facing);
+        final int col = anim.frame % sheet.cols;
 
-      // Outline for local player
-      if (isLocal) {
-        shapes.begin(ShapeType.line);
-        shapes.setColor(const ui.Color(0xFFFFE07A));
-        shapes.rect(x - 3, y - 3, w + 6, h + 6);
+        // Draw shadow ellipse
+        shapes.begin(ShapeType.filled);
+        shapes.setColor(const ui.Color(0x33000000));
+        shapes.circle(x + w / 2, y + h - 4, w * 0.35, 10);
+        shapes.end();
+
+        // Local player highlight ring
+        if (isLocal) {
+          shapes.begin(ShapeType.line);
+          shapes.setColor(const ui.Color(0xFFFFE07A));
+          shapes.rect(x - 3, y - 3, w + 6, h + 6);
+          shapes.end();
+        }
+
+        // Draw sprite
+        final ui.Rect dst = ui.Rect.fromLTWH(x, y, w, h);
+        drawSpriteFrame(
+          canvas: canvas,
+          sheet: sheet,
+          col: col,
+          row: row,
+          dstRect: dst,
+          alpha: 1.0,
+        );
+      } else {
+        // Fallback: colored box if sprites not loaded
+        final ui.Color pokeColor = _parseColor(player.color);
+        shapes.begin(ShapeType.filled);
+        shapes.setColor(pokeColor.withAlpha(isLocal ? 230 : 180));
+        shapes.rect(x, y, w, h);
         shapes.end();
       }
 
-      // Border
-      shapes.begin(ShapeType.line);
-      shapes.setColor(drawColor);
-      shapes.rect(x, y, w, h);
-      shapes.end();
-
-      // Health bar
+      // Health bar and name always rendered on top
       _renderHealthBar(shapes, player);
-
-      // Name label
       _renderPlayerName(player, isLocal);
     }
 
-    // Dead players — faded X
+    // Dead players — faint sprite or faded X
     for (final MultiplayerPlayer player in appData.players) {
       if (player.alive) continue;
       final double cx = player.x + player.width / 2;
       final double cy = player.y + player.height / 2;
-      final double r  = player.width / 4;
 
-      shapes.begin(ShapeType.filled);
-      shapes.setColor(const ui.Color(0x22E74C3C));
-      shapes.circle(cx, cy, player.width * 0.4, 10);
-      shapes.end();
+      final PokemonSpriteBundle? bundle = reg.get(player.pokemonId);
+      if (bundle != null) {
+        final ui.Rect dst = ui.Rect.fromLTWH(player.x, player.y, player.width, player.height);
+        drawSpriteFrame(
+          canvas: canvas,
+          sheet: bundle.faint,
+          col: bundle.faint.cols - 1,
+          row: facingToRow(player.facing),
+          dstRect: dst,
+          alpha: 0.45,
+        );
+      } else {
+        final double r = player.width / 4;
+        shapes.begin(ShapeType.filled);
+        shapes.setColor(const ui.Color(0x22E74C3C));
+        shapes.circle(cx, cy, player.width * 0.4, 10);
+        shapes.end();
 
-      shapes.begin(ShapeType.line);
-      shapes.setColor(const ui.Color(0x66E74C3C));
-      shapes.line(cx - r, cy - r, cx + r, cy + r);
-      shapes.line(cx + r, cy - r, cx - r, cy + r);
-      shapes.end();
+        shapes.begin(ShapeType.line);
+        shapes.setColor(const ui.Color(0x66E74C3C));
+        shapes.line(cx - r, cy - r, cx + r, cy + r);
+        shapes.line(cx + r, cy - r, cx - r, cy + r);
+        shapes.end();
+      }
     }
   }
 
-  /// Small triangle arrow showing which direction the Pokémon faces.
-  void _renderFacingArrow(
-      ShapeRenderer shapes, MultiplayerPlayer player,
-      double cx, double cy, ui.Color color) {
-    final double arrowLen = player.width * 0.38;
-    final double angle = _facingToAngle(player.facing);
-    final double tipX = cx + math.cos(angle) * arrowLen;
-    final double tipY = cy + math.sin(angle) * arrowLen;
-
-    shapes.begin(ShapeType.line);
-    shapes.setColor(color.withAlpha(200));
-    shapes.line(cx, cy, tipX, tipY);
-    shapes.end();
-
-    // Arrow head
-    shapes.begin(ShapeType.filled);
-    shapes.setColor(color.withAlpha(200));
-    shapes.circle(tipX, tipY, 4, 6);
-    shapes.end();
-  }
 
   void _renderPlayerName(MultiplayerPlayer player, bool isLocal) {
     final SpriteBatch batch = game.getBatch();
@@ -582,5 +618,18 @@ class PlayScreen extends ScreenAdapter {
       (color.green * f).round(),
       (color.blue  * f).round(),
     );
+  }
+}
+
+// ─── Per-player animation state ───────────────────────────────────────────────
+class _PlayerAnim {
+  int frame = 0;
+
+  /// Update frame index. Uses real game time so speed is framerate-independent.
+  /// idle = 4 fps, moving = 6 fps.
+  void update(double gameTime, String direction) {
+    final bool moving = direction != 'none' && direction.isNotEmpty;
+    final double fps = moving ? 6.0 : 4.0;
+    frame = (gameTime * fps).floor();
   }
 }

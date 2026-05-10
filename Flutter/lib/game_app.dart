@@ -3,10 +3,9 @@ import 'libgdx_compat/asset_manager.dart';
 import 'libgdx_compat/game_framework.dart';
 import 'loading_screen.dart';
 import 'network_config.dart';
+import 'pokemon_sprites.dart';
 
 /// Core game application for BattleRoyale.
-/// Simplified from the professor's Exemple0700 — no Games-Tool level data needed.
-/// The world (walls, players, bullets) is sent entirely by the NodeJS server.
 class GameApp extends Game {
   final NetworkConfig networkConfig;
   final AppData appData;
@@ -24,7 +23,8 @@ class GameApp extends Game {
     _shapeRenderer = ShapeRenderer();
     _font = BitmapFont();
     _font!.getData().markupEnabled = false;
-    // No level assets to load — world geometry comes from the server.
+    // Load all Pokémon sprites from assets
+    await PokemonSpriteRegistry.instance.loadAll();
     setScreen(LoadingScreen(this));
   }
 
