@@ -22,14 +22,14 @@ int facingToRow(String facing) {
     case 'down':       return 0; // S
     case 'left':       return 6; // W
     case 'right':      return 2; // E
-    case 'upLeft':     return 3; // NW
-    case 'up_left':    return 3; // NW
-    case 'upRight':    return 5; // NE
-    case 'up_right':   return 5; // NE
-    case 'downLeft':   return 1; // SW
-    case 'down_left':  return 1; // SW
-    case 'downRight':  return 7; // SE
-    case 'down_right': return 7; // SE
+    case 'upLeft':     return 5; // NW
+    case 'up_left':    return 5; // NW
+    case 'upRight':    return 3; // NE
+    case 'up_right':   return 3; // NE
+    case 'downLeft':   return 7; // SW
+    case 'down_left':  return 7; // SW
+    case 'downRight':  return 1; // SE
+    case 'down_right': return 1; // SE
     default:           return 0; // Default to South
   }
 }
