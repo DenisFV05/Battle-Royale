@@ -26,15 +26,17 @@ int facingToRow(String facing) {
   }
 }
 
-/// Infer number of columns: find the largest frameW <= frameH that divides width.
-/// Hardcoded overrides for cases where the heuristic fails (verified visually).
+/// Infer number of columns using standard PMD frame widths (24, 32, 40, 48).
+/// This is much more robust than a simple divisor check.
 int _inferCols(int width, int frameH) {
-  // Pikachu idle/walk: 240×448 → 6 cols of 40px (not 5 of 48px)
-  if (width == 240 && frameH == 56) return 6;
-  // Misdreavus: 192×384 → 8 cols of 24px (not 4 of 48px)
-  if (width == 192 && frameH == 48) return 8;
+  // Standard PMD frame widths in these asset packs.
+  for (int fw in [40, 32, 24, 48, 64]) {
+    if (width % fw == 0 && fw <= frameH + 8) {
+      return width ~/ fw;
+    }
+  }
 
-  // General heuristic: largest fw <= frameH that divides width exactly
+  // Fallback heuristic: largest fw <= frameH that divides width exactly.
   for (int fw = frameH; fw >= 1; fw--) {
     if (width % fw == 0) return width ~/ fw;
   }
