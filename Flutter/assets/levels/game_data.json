@@ -13,7 +13,7 @@
           "x": 320,
           "y": 80,
           "depth": 0.0,
-          "tilesSheetFile": "media/punyworld-overworld-tileset.png",
+          "tilesSheetFile": "media/Exterior1_2.png",
           "tilesWidth": 16,
           "tilesHeight": 16,
           "visible": true,
@@ -21,12 +21,12 @@
           "tileMapFile": "tilemaps/level_000_layer_000.json"
         },
         {
-          "name": "Stones 1",
+          "name": "Stones10",
           "gameplayData": "",
-          "x": 528,
-          "y": 400,
+          "x": 640,
+          "y": 304,
           "depth": 0.0,
-          "tilesSheetFile": "media/punyworld-overworld-tileset.png",
+          "tilesSheetFile": "media/Exterior1_2.png",
           "tilesWidth": 16,
           "tilesHeight": 16,
           "visible": true,
@@ -34,12 +34,12 @@
           "tileMapFile": "tilemaps/level_000_layer_001.json"
         },
         {
-          "name": "Stones 2",
+          "name": "Stones 1",
           "gameplayData": "",
-          "x": 656,
-          "y": 80,
+          "x": 528,
+          "y": 400,
           "depth": 0.0,
-          "tilesSheetFile": "media/punyworld-overworld-tileset.png",
+          "tilesSheetFile": "media/Exterior1_2.png",
           "tilesWidth": 16,
           "tilesHeight": 16,
           "visible": true,
@@ -47,17 +47,30 @@
           "tileMapFile": "tilemaps/level_000_layer_002.json"
         },
         {
-          "name": "Stones 3",
+          "name": "Stones 2",
           "gameplayData": "",
-          "x": 48,
-          "y": 400,
+          "x": 656,
+          "y": 80,
           "depth": 0.0,
-          "tilesSheetFile": "media/punyworld-overworld-tileset.png",
+          "tilesSheetFile": "media/Exterior1_2.png",
           "tilesWidth": 16,
           "tilesHeight": 16,
           "visible": true,
           "groupId": "__main__",
           "tileMapFile": "tilemaps/level_000_layer_003.json"
+        },
+        {
+          "name": "Stones 3",
+          "gameplayData": "",
+          "x": 48,
+          "y": 400,
+          "depth": 0.0,
+          "tilesSheetFile": "media/Exterior1_2.png",
+          "tilesWidth": 16,
+          "tilesHeight": 16,
+          "visible": true,
+          "groupId": "__main__",
+          "tileMapFile": "tilemaps/level_000_layer_004.json"
         },
         {
           "name": "Gems Zone",
@@ -70,7 +83,7 @@
           "tilesHeight": 16,
           "visible": true,
           "groupId": "__main__",
-          "tileMapFile": "tilemaps/level_000_layer_004.json"
+          "tileMapFile": "tilemaps/level_000_layer_005.json"
         },
         {
           "name": "Path",
@@ -83,7 +96,7 @@
           "tilesHeight": 16,
           "visible": true,
           "groupId": "__main__",
-          "tileMapFile": "tilemaps/level_000_layer_005.json"
+          "tileMapFile": "tilemaps/level_000_layer_006.json"
         },
         {
           "name": "Terrain",
@@ -96,7 +109,7 @@
           "tilesHeight": 16,
           "visible": true,
           "groupId": "__main__",
-          "tileMapFile": "tilemaps/level_000_layer_006.json"
+          "tileMapFile": "tilemaps/level_000_layer_007.json"
         },
         {
           "name": "Path",
@@ -109,7 +122,7 @@
           "tilesHeight": 16,
           "visible": false,
           "groupId": "__main__",
-          "tileMapFile": "tilemaps/level_000_layer_007.json"
+          "tileMapFile": "tilemaps/level_000_layer_008.json"
         }
       ],
       "layerGroups": [
