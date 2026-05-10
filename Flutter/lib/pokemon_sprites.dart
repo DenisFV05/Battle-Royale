@@ -26,22 +26,42 @@ int facingToRow(String facing) {
   }
 }
 
-/// Infer number of columns using standard PMD frame widths (24, 32, 40, 48).
-/// This is much more robust than a simple divisor check.
-int _inferCols(int width, int frameH) {
-  // Standard PMD frame widths in these asset packs.
-  for (int fw in [40, 32, 24, 48, 64]) {
-    if (width % fw == 0 && fw <= frameH + 8) {
-      return width ~/ fw;
-    }
+/// Infers the exact number of columns for a spritesheet.
+/// Uses a 100% exact mapping of all 50 sprites to completely eliminate heuristic errors.
+/// Infers the exact number of columns for a spritesheet.
+/// Uses a 100% exact mapping of all 50 sprites to completely eliminate heuristic errors.
+int _inferCols(String pokemonId, String animType, int width, int frameH) {
+  // In PMD, 'hurt' animations are consistently 2 frames.
+  if (animType == 'hurt') return 2;
+
+  // Exact mapping for every other sprite to guarantee pixel perfection
+  final Map<String, int> exactCols = {
+    // IDLE
+    'axew_idle': 4, 'buizel_idle': 9, 'chimchar_idle': 5, 'misdreavus_idle': 8, 'pikachu_idle': 6,
+    'riolu_idle': 4, 'rockruff_idle': 7, 'rowlet_idle': 6, 'snorunt_idle': 4, 'trapinch_idle': 4,
+    // WALK
+    'axew_walk': 4, 'buizel_walk': 4, 'chimchar_walk': 7, 'misdreavus_walk': 8, 'pikachu_walk': 4,
+    'riolu_walk': 4, 'rockruff_walk': 7, 'rowlet_walk': 4, 'snorunt_walk': 4, 'trapinch_walk': 4,
+    // FAINT
+    'axew_faint': 4, 'buizel_faint': 4, 'chimchar_faint': 4, 'misdreavus_faint': 4, 'pikachu_faint': 4,
+    'riolu_faint': 4, 'rockruff_faint': 4, 'rowlet_faint': 4, 'snorunt_faint': 4, 'trapinch_faint': 4,
+    // ATTACK
+    'axew_attack': 8, 'buizel_attack': 13, 'chimchar_attack': 8, 'misdreavus_attack': 13, 'pikachu_attack': 13,
+    'riolu_attack': 6, 'rockruff_attack': 10, 'rowlet_attack': 12, 'snorunt_attack': 11, 'trapinch_attack': 13,
+  };
+
+  final key = '${pokemonId}_$animType';
+  if (exactCols.containsKey(key)) {
+    return exactCols[key]!;
   }
 
-  // Fallback heuristic: largest fw <= frameH that divides width exactly.
+  // Absolute fallback (should never be hit unless a new pokemon is added)
   for (int fw = frameH; fw >= 1; fw--) {
     if (width % fw == 0) return width ~/ fw;
   }
   return 1;
 }
+
 
 // ─── Attack animation name per Pokemon ────────────────────────────────────────
 const Map<String, String> kAttackAnim = {
@@ -80,10 +100,11 @@ class SheetInfo {
   const SheetInfo({required this.image, required this.frameW, required this.frameH, required this.cols});
 }
 
-SheetInfo _makeSheet(ui.Image img) {
+SheetInfo _makeSheet(String pokemonId, String animType, ui.Image img) {
   final int fh   = img.height ~/ kNumRows;
-  final int cols = _inferCols(img.width, fh);
+  final int cols = _inferCols(pokemonId, animType, img.width, fh);
   final int fw   = img.width ~/ cols;
+  print('[$pokemonId][$animType] image=${img.width}x${img.height} frame=${fw}x$fh cols=$cols');
   return SheetInfo(image: img, frameW: fw, frameH: fh, cols: cols);
 }
 
@@ -127,11 +148,11 @@ class PokemonSpriteRegistry {
       final String base    = 'assets/levels/media/$folder';
       final String atkName = kAttackAnim[id] ?? 'Strike-Anim';
 
-      final SheetInfo idleS  = _makeSheet(await _load('$base/Idle-Anim.png'));
-      final SheetInfo walkS  = _makeSheet(await _load('$base/Walk-Anim.png'));
-      final SheetInfo hurtS  = _makeSheet(await _load('$base/Hurt-Anim.png'));
-      final SheetInfo faintS = _makeSheet(await _load('$base/Faint-Anim.png'));
-      final SheetInfo atkS   = _makeSheet(await _load('$base/$atkName.png'));
+      final SheetInfo idleS  = _makeSheet(id, 'idle', await _load('$base/Idle-Anim.png'));
+      final SheetInfo walkS  = _makeSheet(id, 'walk', await _load('$base/Walk-Anim.png'));
+      final SheetInfo hurtS  = _makeSheet(id, 'hurt', await _load('$base/Hurt-Anim.png'));
+      final SheetInfo faintS = _makeSheet(id, 'faint', await _load('$base/Faint-Anim.png'));
+      final SheetInfo atkS   = _makeSheet(id, 'attack', await _load('$base/$atkName.png'));
 
       _bundles[id] = PokemonSpriteBundle(
         idle:   idleS,
