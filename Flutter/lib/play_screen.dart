@@ -19,7 +19,8 @@ class PlayScreen extends ScreenAdapter {
   static const double leaderboardWidth   = 240;
   static const double leaderboardPadding = 12;
 
-  static final ui.Color bgColor         = const ui.Color(0xFF000000); // Black letterbox
+  static final ui.Color bgColor         = const ui.Color(0xFFA9DFBF); // Original meadow green
+  static final ui.Color gridColor       = const ui.Color(0xFF82E0AA); // Softer green grid
   static final ui.Color wallColor       = const ui.Color(0xFF8D6E63); // Brown walls
   static final ui.Color wallHighlight   = const ui.Color(0xFFA1887F);
   static final ui.Color healthBarBg     = const ui.Color(0x88000000);
@@ -34,8 +35,7 @@ class PlayScreen extends ScreenAdapter {
 
   final GameApp game;
 
-  double _worldScaleX  = 1.0;
-  double _worldScaleY  = 1.0;
+  double _worldScale   = 1.0;
   double _worldOffsetX = 0;
   double _worldOffsetY = 0;
 
@@ -70,7 +70,7 @@ class PlayScreen extends ScreenAdapter {
     final double screenH  = Gdx.graphics.getHeight().toDouble();
     final double gameAreaW = screenW - leaderboardWidth;
 
-    _updateWorldTransform(appData, gameAreaW, screenH);
+    _updateWorldTransform(appData, screenW, screenH);
 
     // Track deaths → spawn faint effect
     for (final MultiplayerPlayer player in appData.players) {
@@ -107,7 +107,7 @@ class PlayScreen extends ScreenAdapter {
     final ui.Canvas canvas = Gdx.graphics.getCanvas();
     canvas.save();
     canvas.translate(_worldOffsetX, _worldOffsetY);
-    canvas.scale(_worldScaleX, _worldScaleY);
+    canvas.scale(_worldScale, _worldScale);
 
     _renderMapLayers(canvas, appData);
 
@@ -537,10 +537,15 @@ class PlayScreen extends ScreenAdapter {
 
   void _updateWorldTransform(AppData appData, double areaW, double areaH) {
     if (appData.worldWidth <= 0 || appData.worldHeight <= 0) return;
-    _worldScaleX = areaW / appData.worldWidth;
-    _worldScaleY = areaH / appData.worldHeight;
-    _worldOffsetX = 0;
-    _worldOffsetY = 0;
+    final double scaleX = areaW / appData.worldWidth;
+    final double scaleY = areaH / appData.worldHeight;
+    // Usamos "Cover" (max) para llenar toda la pantalla sin deformar.
+    // Esto centrará el mapa y recortará los bordes que sobren.
+    _worldScale   = math.max(scaleX, scaleY);
+    final double drawW = appData.worldWidth  * _worldScale;
+    final double drawH = appData.worldHeight * _worldScale;
+    _worldOffsetX = (areaW - drawW) / 2;
+    _worldOffsetY = (areaH - drawH) / 2;
   }
 
   // ─── Input ─────────────────────────────────────────────────────────────────
