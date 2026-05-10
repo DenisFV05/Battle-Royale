@@ -18,11 +18,19 @@ const int kNumRows = 8; // always 8 directional rows
 /// This sprite pack uses the SE-first order: 0=S,1=SE,2=E,3=NE,4=N,5=NW,6=W,7=SW
 int facingToRow(String facing) {
   switch (facing) {
-    case 'up':    return 4; // N
-    case 'down':  return 0; // S
-    case 'left':  return 6; // W
-    case 'right': return 2; // E
-    default:      return 0;
+    case 'up':         return 4; // N
+    case 'down':       return 0; // S
+    case 'left':       return 6; // W
+    case 'right':      return 2; // E
+    case 'upLeft':     return 3; // NW
+    case 'up_left':    return 3; // NW
+    case 'upRight':    return 5; // NE
+    case 'up_right':   return 5; // NE
+    case 'downLeft':   return 1; // SW
+    case 'down_left':  return 1; // SW
+    case 'downRight':  return 7; // SE
+    case 'down_right': return 7; // SE
+    default:           return 0; // Default to South
   }
 }
 
