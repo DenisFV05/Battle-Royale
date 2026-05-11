@@ -90,6 +90,8 @@ class GameLogic {
             { x: 656, y: 80, w: 80, h: 32 },
             // Stones 3 (layer 009)
             { x: 48, y: 400, w: 80, h: 32 },
+            // Rocas derecha (layer 011 - Path)
+            { x: 832, y: 272, w: 160, h: 80 },
         ];
     }
 
