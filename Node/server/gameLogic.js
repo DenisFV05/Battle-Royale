@@ -70,11 +70,26 @@ class GameLogic {
 
     generateWalls() {
         this.walls = [
-            { x: 320, y: 80, w: 32, h: 80 },  // Stones 0
-            { x: 640, y: 304, w: 80, h: 32 }, // Stones 10
-            { x: 528, y: 400, w: 32, h: 80 }, // Stones 1
-            { x: 656, y: 80, w: 80, h: 32 },  // Stones 2
-            { x: 48,  y: 400, w: 80, h: 32 }, // Stones 3
+            // Stones 0 (layer 000)
+            { x: 320, y: 80, w: 32, h: 80 },
+            // Stones10 (layer 001)
+            { x: 640, y: 304, w: 80, h: 32 },
+            // AGUA2 (layer 002)
+            { x: 48, y: 64, w: 192, h: 112 },
+            // AGUA3 (layer 003)
+            { x: 48, y: 161, w: 288, h: 112 },
+            // CASA (layer 004)
+            { x: 639, y: 204, w: 240, h: 80 },
+            // CASA (layer 005)
+            { x: 402, y: 34, w: 112, h: 128 },
+            // CASA2 (layer 006)
+            { x: 816, y: -1, w: 96, h: 128 },
+            // STONE1 (layer 007)
+            { x: 528, y: 400, w: 32, h: 80 },
+            // Stones 2 (layer 008)
+            { x: 656, y: 80, w: 80, h: 32 },
+            // Stones 3 (layer 009)
+            { x: 48, y: 400, w: 80, h: 32 },
         ];
     }
 
@@ -364,16 +379,16 @@ class GameLogic {
 
     getSpawnPosition(index) {
         const positions = [
-            { x: 50,                    y: 50 },
-            { x: WORLD_WIDTH - 80,      y: 50 },
-            { x: 50,                    y: WORLD_HEIGHT - 80 },
-            { x: WORLD_WIDTH - 80,      y: WORLD_HEIGHT - 80 },
-            { x: WORLD_WIDTH / 2,       y: 50 },
-            { x: WORLD_WIDTH / 2,       y: WORLD_HEIGHT - 80 },
-            { x: 50,                    y: WORLD_HEIGHT / 2 },
-            { x: WORLD_WIDTH - 80,      y: WORLD_HEIGHT / 2 },
-            { x: WORLD_WIDTH / 4,       y: WORLD_HEIGHT / 4 },
-            { x: 3 * WORLD_WIDTH / 4,   y: 3 * WORLD_HEIGHT / 4 },
+            { x: 10,  y: 10 },   // Top left
+            { x: 280, y: 20 },   // Top mid-left
+            { x: 550, y: 20 },   // Top mid-right
+            { x: 950, y: 20 },   // Top right
+            { x: 950, y: 450 },  // Bottom right
+            { x: 150, y: 450 },  // Bottom left
+            { x: 10,  y: 300 },  // Mid left
+            { x: 450, y: 250 },  // Center
+            { x: 800, y: 400 },  // Bottom mid-right
+            { x: 350, y: 350 },  // Bottom mid-left
         ];
         return positions[index % positions.length];
     }
