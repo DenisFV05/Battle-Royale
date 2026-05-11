@@ -112,7 +112,7 @@ SheetInfo _makeSheet(String pokemonId, String animType, ui.Image img) {
   final int fh   = img.height ~/ kNumRows;
   final int cols = _inferCols(pokemonId, animType, img.width, fh);
   final int fw   = img.width ~/ cols;
-  print('[$pokemonId][$animType] image=${img.width}x${img.height} frame=${fw}x$fh cols=$cols');
+    // Debug print removed
   return SheetInfo(image: img, frameW: fw, frameH: fh, cols: cols);
 }
 
@@ -179,7 +179,7 @@ class PokemonSpriteRegistry {
       );
 
       // ignore: avoid_print
-      print('[$id] idle=${idleS.frameW}x${idleS.frameH}(${idleS.cols}cols) walk=${walkS.frameW}x${walkS.frameH}(${walkS.cols}cols) hurt=${hurtS.frameW}x${hurtS.frameH}(${hurtS.cols}cols)');
+      // Debug print removed
     }
     _loaded = true;
   }

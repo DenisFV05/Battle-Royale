@@ -535,17 +535,43 @@ class PlayScreen extends ScreenAdapter {
 
   // ─── World transform ───────────────────────────────────────────────────────
 
-  void _updateWorldTransform(AppData appData, double areaW, double areaH) {
+  void _updateWorldTransform(AppData appData, double screenW, double screenH) {
     if (appData.worldWidth <= 0 || appData.worldHeight <= 0) return;
-    final double scaleX = areaW / appData.worldWidth;
-    final double scaleY = areaH / appData.worldHeight;
-    // Usamos "Cover" (max) para llenar toda la pantalla sin deformar.
-    // Esto centrará el mapa y recortará los bordes que sobren.
-    _worldScale   = math.max(scaleX, scaleY);
-    final double drawW = appData.worldWidth  * _worldScale;
-    final double drawH = appData.worldHeight * _worldScale;
-    _worldOffsetX = (areaW - drawW) / 2;
-    _worldOffsetY = (areaH - drawH) / 2;
+
+    final double gameAreaW = screenW - leaderboardWidth;
+    final double scaleX = gameAreaW / appData.worldWidth;
+    final double scaleY = screenH / appData.worldHeight;
+    
+    // Usamos Cover (max) para que no haya franjas, pero manteniendo proporciones
+    _worldScale = math.max(scaleX, scaleY);
+    
+    final MultiplayerPlayer? self = appData.localPlayer;
+    if (self != null) {
+      // Centramos la cámara en el jugador, pero respecto al área de juego visible (izquierda del panel)
+      _worldOffsetX = (gameAreaW / 2) - (self.x * _worldScale);
+      _worldOffsetY = (screenH / 2) - (self.y * _worldScale);
+    } else {
+      _worldOffsetX = (gameAreaW - appData.worldWidth * _worldScale) / 2;
+      _worldOffsetY = (screenH - appData.worldHeight * _worldScale) / 2;
+    }
+
+    // Limitamos el scroll para que la cámara no se salga de los bordes del mapa
+    final double minOffsetX = gameAreaW - (appData.worldWidth * _worldScale);
+    final double maxOffsetX = 0;
+    final double minOffsetY = screenH - (appData.worldHeight * _worldScale);
+    final double maxOffsetY = 0;
+
+    if (minOffsetX < maxOffsetX) {
+      _worldOffsetX = _worldOffsetX.clamp(minOffsetX, maxOffsetX);
+    } else {
+      _worldOffsetX = (gameAreaW - appData.worldWidth * _worldScale) / 2;
+    }
+
+    if (minOffsetY < maxOffsetY) {
+      _worldOffsetY = _worldOffsetY.clamp(minOffsetY, maxOffsetY);
+    } else {
+      _worldOffsetY = (screenH - appData.worldHeight * _worldScale) / 2;
+    }
   }
 
   // ─── Input ─────────────────────────────────────────────────────────────────
