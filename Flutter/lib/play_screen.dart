@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+import 'package:audioplayers/audioplayers.dart';
 
 import 'app_data.dart';
 import 'effects.dart';
@@ -50,6 +51,9 @@ class PlayScreen extends ScreenAdapter {
   // Sprite animation state per player
   final Map<String, _PlayerAnim> _playerAnims = {};
 
+  final AudioPlayer _musicPlayer = AudioPlayer();
+  bool _musicStarted = false;
+
   PlayScreen(this.game);
 
   @override
@@ -59,11 +63,16 @@ class PlayScreen extends ScreenAdapter {
 
     if (appData.phase == MatchPhase.waiting ||
         appData.phase == MatchPhase.connecting) {
+      _stopMusic();
       _submitDirection(appData, 'none');
       _effects.clear();
       _previouslyAlive.clear();
       game.setScreen(WaitingRoomScreen(game));
       return;
+    }
+
+    if (!_musicStarted && appData.phase == MatchPhase.playing) {
+      _startMusic();
     }
 
     final double screenW  = Gdx.graphics.getWidth().toDouble();
@@ -529,8 +538,28 @@ class PlayScreen extends ScreenAdapter {
 
   @override
   void dispose() {
+    _musicPlayer.dispose();
     _submitDirection(game.getAppData(), 'none');
     _effects.clear();
+  }
+
+  void _startMusic() async {
+    _musicStarted = true;
+    try {
+      await _musicPlayer.setReleaseMode(ReleaseMode.loop);
+      await _musicPlayer.setVolume(0.15); // Suave, como pidió el usuario
+      await _musicPlayer.play(AssetSource('other/music.mp3'));
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error al reproducir música: $e');
+    }
+  }
+
+  void _stopMusic() {
+    if (_musicStarted) {
+      _musicPlayer.stop();
+      _musicStarted = false;
+    }
   }
 
   // ─── World transform ───────────────────────────────────────────────────────
